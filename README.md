@@ -1,4 +1,4 @@
-# SJC App Registry
+# SJC Application Registry
 
 Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API.
 
