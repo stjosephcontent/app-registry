@@ -1,0 +1,189 @@
+swagger: "2.0"
+info:
+  version: "0.1.0"
+  title: "SJC Application Registry"
+  description: "Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API."
+  termsOfService: ""
+  contact:
+    name: "SJC"
+  license:
+    name: ""
+host: "localhost:10010"
+basePath: "/"
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /hello:
+    x-swagger-router-controller: "hello_world"
+    get:
+      description: "Returns 'Hello' to the caller"
+      operationId: "helloxxx"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "The name of the person to whom to say hello"
+        required: false
+        type: "string"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/HelloWorldResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /appdefs:
+    x-swagger-router-controller: "AppDefs"
+    get:
+      description: "Returns all application definitions from the system that the user has access to"
+      operationId: "getAppDefs"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "tags"
+        in: "query"
+        description: "tags to filter by"
+        required: false
+        type: "array"
+        items:
+          type: "string"
+          collectionFormat: "csv"
+      - name: "limit"
+        in: "query"
+        description: "maximum number of results to return"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "pet response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/AppDef"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ErrorModel"
+
+    
+definitions:
+  AppDef:
+    description: "An Application Definition describes all the docker services that comprise an SJC application"
+    type: "object"
+    required:
+    - "name"
+    properties:
+      audit:
+        $ref: "#/definitions/AuditInfo"
+      description:
+        type: "string"
+      deployedTo:
+        type: "string"
+      docker:
+        type: "string"
+      ephemeralPort:
+        type: "string"
+        format: "int32"
+      healthCheck:
+        type: "string"
+        format: "uri"
+      name:
+        type: "string"
+      repository:
+        type: "object"
+        properties:
+          host:
+            type: "string"
+          url:
+            type: "string"
+      tag:
+        type: "string"
+  AppTarget:
+    description: "Application Targets are host environments that can run SJC applications. Since SJC applications are currently web based valid targets can be local development environments as well as cloud platforms like AWS. Future consideration may be given to hosting non web applications including native executables for mobile and desktop."
+    type: "object"
+    required:
+    - "name"
+    properties:
+      audit:
+        $ref: "#/definitions/AuditInfo"
+      description:
+        type: "string"
+      endPoint:
+        type: "string"
+      name:
+        type: "string"
+      provider:
+        type: "string"
+      tag:
+        type: "string"
+  AppTemplate:
+    description: "An Application Template describes an SJC standard stack plus mandatory components. Such stacks will includine LAMP, Wordpress, MEAN and Python + Django + Postgress."
+    type: "object"
+    required:
+    - "name"
+    properties:
+      audit:
+        $ref: "#/definitions/AuditInfo"
+      description:
+        type: "string"
+      docker:
+        type: "string"
+      name:
+        type: "string"
+      provider:
+        type: "string"
+      tag:
+        type: "string"
+  AuditInfo:
+    description: "The AuditInfo hello is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
+    type: "object"
+    required:
+    - "created"
+    - "updated"
+    properties:
+      created:
+        type: "object"
+        properties:
+          by:
+            type: "string"
+          on:
+            type: "string"
+            format: "date-time"
+      updated:
+        type: "object"
+        properties:
+          by:
+            type: "string"
+          on:
+            type: "string"
+            format: "date-time"
+  ErrorModel:
+    type: "object"
+    required:
+    - "code"
+    - "message"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+  HelloWorldResponse:
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+  ErrorResponse:
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"

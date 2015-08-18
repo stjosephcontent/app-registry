@@ -1,0 +1,36 @@
+{
+  "name": "application-registry",
+  "version": "0.1.0",
+  "description": "Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API.",
+  "main": "app.js",
+  "directories": {
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "sjc",
+    "raas",
+    "appreg",
+    "sjc-cli"
+  ],
+  "author": "Troy Forster",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.12.3",
+    "swagger-express-mw": "0.0.x"
+  },
+  "devDependencies": {
+    "should": "^5.2.0",
+    "supertest": "^0.15.0",
+    "z-schema": "^3.12.0",
+    "request": "^2.58.0",
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5",
+    "dotenv": "^1.2.0"
+  }
+}
