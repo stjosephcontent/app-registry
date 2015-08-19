@@ -13,98 +13,205 @@ basePath: "/"
 schemes:
 - "http"
 - "https"
+
 consumes:
 - "application/json"
 produces:
 - "application/json"
 paths:
-  /hello:
-    x-swagger-router-controller: "hello_world"
+  /applications:
+    x-swagger-router-controller: "AppDefsController"
     get:
-      description: "Returns 'Hello' to the caller"
-      operationId: "helloxxx"
-      parameters:
-      - name: "name"
-        in: "query"
-        description: "The name of the person to whom to say hello"
-        required: false
-        type: "string"
+      description: "Gets a list of known applications"
+      operationId: "getApplications"
       responses:
         "200":
           description: "Success"
           schema:
-            $ref: "#/definitions/HelloWorldResponse"
+            type: "array"
+            items:
+              $ref: "#/definitions/AppDefRequest"
         default:
           description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /appdefs:
+  /applications/{branch-name}:
     x-swagger-router-controller: "AppDefs"
-    get:
-      description: "Returns all application definitions from the system that the user has access to"
-      operationId: "getAppDefs"
+    post:
+      description: "Creates a new abstract application definition in app-reg."
+      operationId: "postAppDef"
+      consumes:
+      - "application/json"
       produces:
       - "application/json"
       parameters:
-      - name: "tags"
-        in: "query"
-        description: "tags to filter by"
-        required: false
-        type: "array"
-        items:
-          type: "string"
-          collectionFormat: "csv"
-      - name: "limit"
-        in: "query"
-        description: "maximum number of results to return"
-        required: false
-        type: "integer"
-        format: "int32"
+      - name: "branch-name"
+        type: "string"
+        description: "Name of branch to create."
+        required: true
+        in: "path"
+      - name: "appdef"
+        schema:
+          $ref: "#/definitions/AppDefRequest"
+        description: "An AppDefRequest object."
+        required: true
+        in: "body"
       responses:
         200:
-          description: "pet response"
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/AppDef"
+            $ref: "#/definitions/AppDefResponse"
+          description: "An AppDefResponse object."
         default:
-          description: "unexpected error"
           schema:
             $ref: "#/definitions/ErrorModel"
-
-    
+          description: "unexpected error"
 definitions:
-  AppDef:
-    description: "An Application Definition describes all the docker services that comprise an SJC application"
+  AppDefRequest:
+    description: "An AppDef object suitable for POST and PUT."
     type: "object"
     required:
     - "name"
+    - "description"
+    - "version"
     properties:
-      audit:
-        $ref: "#/definitions/AuditInfo"
+      name:
+        type: "string"
+        description: "The lowercase and dash-separated canonical name for this application."
       description:
         type: "string"
-      deployedTo:
+        description: "Unambiguously describes this specific SJC application."
+      docker:
         type: "string"
+      healthCheck:
+        type: "string"
+        description: "Placeholder while we expand the idea of a heartbeat-like feature."
+        format: "uri"
+        default: null
+      repository:
+        type: "object"
+        description: "Only supporting Get at this time."
+        additionalProperties:
+          $ref: "#/definitions/GitRemote"
+      commands:
+        type: "object"
+        description: "Zero, one or more shell commands."
+        additionalProperties:
+          $ref: "#/definitions/CommandDefinition"
+      services:
+        type: "object"
+        description: "For now, a wrapper around Docker file."
+        additionalProperties:
+          $ref: "#/definitions/ServiceDefinition"
+      testRunners:
+        type: "object"
+        description: "A list of available test runners that can be invoked within a running application instance."
+        additionalProperties:
+          $ref: "#/definitions/TestRunnerDefinition"
+      tag:
+        type: "string"
+      version:
+        type: "string"
+        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
+  AppDefResponse:
+    description: "An AppDef object including previously system generated UUID and ephemeralPort."
+    type: "object"
+    required:
+    - "name"
+    - "version"
+    - "audit"
+    properties:
+      name:
+        type: "string"
+        description: "The lowercase and dash-separated canonical name for this application."
+      branch:
+        type: "string"
+        description: "The repository branch name for a specific instance of this application"
+        default: null
+      target:
+        type: "string"
+        description: "The deployed location of this instance."
+        default: null
+      audit:
+        $ref: "#/definitions/AuditInfo"
+        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
+      description:
+        type: "string"
+        description: "Unambiguously describes this specific SJC application."
       docker:
         type: "string"
       ephemeralPort:
         type: "string"
         format: "int32"
+        default: null
       healthCheck:
         type: "string"
+        description: "Placeholder while we expand the idea of a heartbeat-like feature."
         format: "uri"
-      name:
-        type: "string"
+        default: null
       repository:
         type: "object"
-        properties:
-          host:
-            type: "string"
-          url:
-            type: "string"
+        description: "Only supporting Get at this time."
+        additionalProperties:
+          $ref: "#/definitions/GitRemote"
+      commands:
+        type: "object"
+        description: "Zero, one or more shell commands."
+        additionalProperties:
+          $ref: "#/definitions/CommandDefinition"
+      services:
+        type: "object"
+        description: "For now, a wrapper around Docker file."
+        additionalProperties:
+          $ref: "#/definitions/ServiceDefinition"
+      testRunners:
+        type: "object"
+        description: "A list of available test runners that can be invoked within a running application instance."
+        additionalProperties:
+          $ref: "#/definitions/TestRunnerDefinition"
       tag:
         type: "string"
+      version:
+        type: "string"
+        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
+  ServiceDefinition:
+    description: "Is this a docker file?"
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Arbitrary and application unique name for the service."
+      data:
+        type: "object"
+        description: "an object."
+  TestRunnerDefinition:
+    description: "Meta information required to execute a test suite."
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Arbitrary and application unique name for the test runner."
+      runner:
+        type: "object"
+        description: "Details, yet to be determined."
+  CommandDefinition:
+    description: "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version."
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "A unique name or key to reference the command."
+      command:
+        type: "string"
+        description: "The full command line to execute."
+  GitRemote:
+    description: "Describes a remote reference to a Git repository."
+    type: "object"
+    properties:
+      name:
+        type: string
+        description: "E.g. origin, gitlab, corpus, etc."
+      uri:
+        type: string
   AppTarget:
     description: "Application Targets are host environments that can run SJC applications. Since SJC applications are currently web based valid targets can be local development environments as well as cloud platforms like AWS. Future consideration may be given to hosting non web applications including native executables for mobile and desktop."
     type: "object"
@@ -142,7 +249,7 @@ definitions:
       tag:
         type: "string"
   AuditInfo:
-    description: "The AuditInfo hello is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
+    description: "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
     type: "object"
     required:
     - "created"
@@ -150,6 +257,9 @@ definitions:
     properties:
       created:
         type: "object"
+        required:
+        - "by"
+        - "on"
         properties:
           by:
             type: "string"
@@ -158,6 +268,9 @@ definitions:
             format: "date-time"
       updated:
         type: "object"
+        required:
+        - "by"
+        - "on"
         properties:
           by:
             type: "string"
@@ -173,12 +286,6 @@ definitions:
       code:
         type: "integer"
         format: "int32"
-      message:
-        type: "string"
-  HelloWorldResponse:
-    required:
-    - "message"
-    properties:
       message:
         type: "string"
   ErrorResponse:
