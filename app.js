@@ -1,8 +1,15 @@
-'use strict';
+"use strict";
 
-var SwaggerExpress = require('swagger-express-mw');
-var app = require('express')();
+var SwaggerExpress = require("swagger-express-mw");
+
+var app = require("express")(),
+   appReg = require("./api/helpers/AppReg.js");
+
 module.exports = app; // for testing
+
+appReg.init({}, function (d) { 
+   console.log("appReg initialized.");
+});
 
 var config = {
   appRoot: __dirname // required config
@@ -27,5 +34,5 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
    port = 10010; // to-do get from swagger file 
   app.listen(port);
 
-  console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+   console.log("try this:\ncurl http://127.0.0.1:" + port + "/hello?name=Scott");
 });

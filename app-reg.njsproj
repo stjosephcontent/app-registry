@@ -13,12 +13,13 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>app-reg</Name>
+    <StartWebBrowser>True</StartWebBrowser>
+    <Environment>NODE_ENV=development</Environment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="api\helpers\README.md" />
     <Content Include="api\mocks\README.md" />
     <Content Include="api\swagger\swagger.yaml" />
     <Content Include="config\default.yaml" />
@@ -42,8 +43,12 @@
     <Folder Include="test\api\helpers\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="api\controllers\ApplicationsController.js" />
+    <Compile Include="api\helpers\ApplicationModel.js" />
+    <Compile Include="api\helpers\AppReg.js" />
     <Compile Include="app.js" />
-    <Compile Include="test\api\controllers\hello_world.js" />
+    <Compile Include="test\api\controllers\ApplicationController.js" />
+    <Compile Include="test\api\helpers\AppReg.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->

@@ -19,160 +19,151 @@ consumes:
 produces:
 - "application/json"
 paths:
+
+  ## All applications
   /applications:
-    x-swagger-router-controller: "AppDefsController"
+    x-swagger-router-controller: "ApplicationsController"
     get:
-      description: "Gets a list of known applications"
-      operationId: "getApplications"
+      description: "Gets a list of all known applications"
+      operationId: "ReadApplications"
       responses:
         "200":
           description: "Success"
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/AppDefRequest"
+              $ref: "#/definitions/ApplicationResponse"
         default:
           description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /applications/{branch-name}:
-    x-swagger-router-controller: "AppDefs"
-    post:
-      description: "Creates a new abstract application definition in app-reg."
-      operationId: "postAppDef"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "branch-name"
-        type: "string"
-        description: "Name of branch to create."
-        required: true
-        in: "path"
-      - name: "appdef"
-        schema:
-          $ref: "#/definitions/AppDefRequest"
-        description: "An AppDefRequest object."
-        required: true
-        in: "body"
-      responses:
-        200:
-          schema:
-            $ref: "#/definitions/AppDefResponse"
-          description: "An AppDefResponse object."
-        default:
-          schema:
-            $ref: "#/definitions/ErrorModel"
-          description: "unexpected error"
+
+
+          
 definitions:
-  AppDefRequest:
-    description: "An AppDef object suitable for POST and PUT."
+
+        
+  ## Application Response Object ##        
+  ApplicationResponse:
+    description: "An Application Object including previously system generated UUID and ephemeralPort."
     type: "object"
-    required:
-    - "name"
-    - "description"
-    - "version"
+
     properties:
+    
       name:
         type: "string"
         description: "The lowercase and dash-separated canonical name for this application."
+        
       description:
         type: "string"
         description: "Unambiguously describes this specific SJC application."
-      docker:
+      
+      address: 
         type: "string"
-      healthCheck:
-        type: "string"
-        description: "Placeholder while we expand the idea of a heartbeat-like feature."
-        format: "uri"
-        default: null
-      repository:
-        type: "object"
-        description: "Only supporting Get at this time."
-        additionalProperties:
-          $ref: "#/definitions/GitRemote"
-      commands:
-        type: "object"
-        description: "Zero, one or more shell commands."
-        additionalProperties:
-          $ref: "#/definitions/CommandDefinition"
-      services:
-        type: "object"
-        description: "For now, a wrapper around Docker file."
-        additionalProperties:
-          $ref: "#/definitions/ServiceDefinition"
-      testRunners:
-        type: "object"
-        description: "A list of available test runners that can be invoked within a running application instance."
-        additionalProperties:
-          $ref: "#/definitions/TestRunnerDefinition"
-      tag:
-        type: "string"
+        description: "The production/public domain."
+        
       version:
         type: "string"
         description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
-  AppDefResponse:
-    description: "An AppDef object including previously system generated UUID and ephemeralPort."
-    type: "object"
-    required:
-    - "name"
-    - "version"
-    - "audit"
-    properties:
-      name:
+      
+      bugs:
         type: "string"
-        description: "The lowercase and dash-separated canonical name for this application."
+        description: "The web address of the issue tracker."
+        
+      docs:
+        type: "string"
+        description: "The web address of the wiki or documentation repository."            
+          
       branch:
         type: "string"
         description: "The repository branch name for a specific instance of this application"
-        default: null
-      target:
+
+        
+      branches:
+        type: "array"
+        items:
+          $ref: "#/definitions/BranchDefinition"
+        
+
+          
+      cnames:
+        type: "array"
+        description: "List of cnames used to access this instance"
+        items:
+          $ref: "#/definitions/CNameDefinition"
+        
+      host:
         type: "string"
-        description: "The deployed location of this instance."
-        default: null
-      audit:
-        $ref: "#/definitions/AuditInfo"
-        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
-      description:
-        type: "string"
-        description: "Unambiguously describes this specific SJC application."
-      docker:
-        type: "string"
+        description: "The host environment currently expected to be localhost or AWS."
+        
+
+
+
       ephemeralPort:
         type: "string"
         format: "int32"
-        default: null
+        
+
       healthCheck:
         type: "string"
         description: "Placeholder while we expand the idea of a heartbeat-like feature."
         format: "uri"
-        default: null
-      repository:
+        
+
+      remotes:
         type: "object"
-        description: "Only supporting Get at this time."
+        description: "Git repositories."
         additionalProperties:
           $ref: "#/definitions/GitRemote"
-      commands:
-        type: "object"
-        description: "Zero, one or more shell commands."
-        additionalProperties:
-          $ref: "#/definitions/CommandDefinition"
-      services:
-        type: "object"
-        description: "For now, a wrapper around Docker file."
-        additionalProperties:
-          $ref: "#/definitions/ServiceDefinition"
+
       testRunners:
         type: "object"
         description: "A list of available test runners that can be invoked within a running application instance."
         additionalProperties:
           $ref: "#/definitions/TestRunnerDefinition"
-      tag:
+
+
+      tags:
+        type: "array"
+        items: 
+          type: "string"
+
+      commands:
+        type: "object"
+        description: "Zero, one or more shell commands."
+        
+        $ref: "#/definitions/CommandDefinition"
+
+      services:
+        type: "object"
+        description: "For now, a wrapper around Docker file."
+        additionalProperties:
+          $ref: "#/definitions/ServiceDefinition"
+
+
+      audit:
+        type: "object"
+        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
+        $ref: "#/definitions/AuditInfo"
+        
+        
+
+
+
+      
+  BranchDefinition:
+    description: "An atomic branch record."
+    type: "object"
+    properties:
+      X:
         type: "string"
-      version:
-        type: "string"
-        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
+      
+  ## CName Definition ##
+  CNameDefinition:
+    description: "An internet cannonical name."
+    type: "string"
+ 
+  ## Service Definition ##     
   ServiceDefinition:
     description: "Is this a docker file?"
     type: "object"
@@ -183,6 +174,8 @@ definitions:
       data:
         type: "object"
         description: "an object."
+        
+  ## TestRunner Definition ##        
   TestRunnerDefinition:
     description: "Meta information required to execute a test suite."
     type: "object"
@@ -193,6 +186,8 @@ definitions:
       runner:
         type: "object"
         description: "Details, yet to be determined."
+        
+  ## Command Definition ##        
   CommandDefinition:
     description: "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version."
     type: "object"
@@ -203,6 +198,8 @@ definitions:
       command:
         type: "string"
         description: "The full command line to execute."
+        
+  ## Git Remote Definition ##        
   GitRemote:
     description: "Describes a remote reference to a Git repository."
     type: "object"
@@ -212,6 +209,8 @@ definitions:
         description: "E.g. origin, gitlab, corpus, etc."
       uri:
         type: string
+
+  ## Application Target Definition        
   AppTarget:
     description: "Application Targets are host environments that can run SJC applications. Since SJC applications are currently web based valid targets can be local development environments as well as cloud platforms like AWS. Future consideration may be given to hosting non web applications including native executables for mobile and desktop."
     type: "object"
@@ -248,35 +247,27 @@ definitions:
         type: "string"
       tag:
         type: "string"
+        
   AuditInfo:
     description: "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
     type: "object"
-    required:
-    - "created"
-    - "updated"
     properties:
       created:
         type: "object"
-        required:
-        - "by"
-        - "on"
         properties:
-          by:
+          by: 
             type: "string"
-          on:
+          on: 
             type: "string"
-            format: "date-time"
       updated:
         type: "object"
-        required:
-        - "by"
-        - "on"
         properties:
-          by:
+          by: 
             type: "string"
-          on:
+          on: 
             type: "string"
-            format: "date-time"
+
+            
   ErrorModel:
     type: "object"
     required:

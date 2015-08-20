@@ -2,18 +2,17 @@ var should = require('should');
 var request = require('supertest');
 var server = require('../../../app');
 
-process.env.A127_ENV = 'test';
 
 describe('controllers', function() {
 
-  describe('hello_world', function() {
+  describe('ApplicationsController', function() {
 
-    describe('GET /hello', function() {
+    describe('GET /', function() {
 
-      it('should return a default string', function(done) {
+      it('should return an array of ApplicationResponse objects', function(done) {
 
         request(server)
-          .get('/hello')
+          .get('/')
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
@@ -29,7 +28,7 @@ describe('controllers', function() {
       it('should accept a name parameter', function(done) {
 
         request(server)
-          .get('/hello')
+          .get('/')
           .query({ name: 'Scott'})
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
