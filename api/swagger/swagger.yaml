@@ -9,10 +9,9 @@ info:
   license:
     name: ""
 host: "localhost:10010"
-basePath: "/"
+basePath: "/api/v1/"
 schemes:
 - "http"
-- "https"
 
 consumes:
 - "application/json"
@@ -23,231 +22,488 @@ paths:
   ## All applications
   /applications:
     x-swagger-router-controller: "ApplicationsController"
+    
     get:
-      description: "Gets a list of all known applications"
+      description: "Read all Applications from the registry."
       operationId: "ReadApplications"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
       responses:
-        "200":
-          description: "Success"
+        200:
+          description: "Success."
           schema:
             type: "array"
             items:
               $ref: "#/definitions/ApplicationResponse"
+        405:
+          description: "Validation exception."              
         default:
           description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
+      
+    #  security:
+     #   - auth:
+      #    - "write_reg"
+          
+   
 
+  /applications/{application}/:
+    x-swagger-router-controller: "ApplicationsController"
+    get:
+      description: "Read a specific application with deep Ref object."
+      operationId: "ReadApplication"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to read."
+          type: "string"
+          required: true
+   
+      responses:
+          200:
+            description: "Success."
+            schema:
+                $ref: "#/definitions/ApplicationResponse"
+          405:
+            description: "Validation exception."              
+          default:
+            description: "Error"
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+          
+    post:
+      description: "Create a new Application in the registry."
+      operationId: "CreateApplication"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to create."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Application request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/ApplicationRequest"
+            
+      responses:
+        200: 
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        default:
+          description: "Error."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      
+    put:
+      description: "Update an Application object."
+      operationId: "UpdateApplication"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to add the ref to."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Application request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/ApplicationRequest"
+            
+      responses:
+        200:
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        405:
+          description: "Validation exception."
+        404:
+          description: "Application not found."
+        400:
+          description: "Invalid name supplied."            
 
           
+  /applications/{application}/{ref}:
+    x-swagger-router-controller: "ApplicationsController"
+    post:
+      description: "Create a new Application Ref object."
+      operationId: "CreateApplicationRef"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to create."
+          type: "string"
+          required: true
+
+        - in: "path"
+          name: "ref"
+          description: "The name of the ref to create."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Ref request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/RefRequest"
+            
+      responses:
+        200: 
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        default:
+          description: "Error."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      
+    put:
+      description: "Update an Application's Ref object."
+      operationId: "UpdateApplicationRef"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to create."
+          type: "string"
+          required: true
+
+        - in: "path"
+          name: "ref"
+          description: "The name of the ref to create."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Ref request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/RefRequest"
+            
+      responses:
+        200:
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        405:
+          description: "Validation exception."
+        404:
+          description: "Application not found."
+        400:
+          description: "Invalid name supplied."            
+ 
+            
+  /applications/{application}/{ref}/{host}:
+    x-swagger-router-controller: "ApplicationsController"
+    post:
+      description: "Create a new Target object on a specific Application and Ref."
+      operationId: "CreateApplicationRefTarget"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to create."
+          type: "string"
+          required: true
+
+        - in: "path"
+          name: "ref"
+          description: "The name of the ref to create."
+          type: "string"
+          required: true
+          
+        - in: "path"
+          name: "host"
+          description: "The name of the host to create."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Host (aka Target) request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/HostRequest"
+            
+      responses:
+        200: 
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        default:
+          description: "Error."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      
+          
+    put:
+      description: "Update a target on a specific Application and Ref."
+      operationId: "UpdateApplicationRefTarget"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+          
+      parameters:
+        - in: "path"
+          name: "application"
+          description: "The name of the application to update."
+          type: "string"
+          required: true
+
+        - in: "path"
+          name: "ref"
+          description: "The name of the ref to update."
+          type: "string"
+          required: true
+          
+        - in: "path"
+          name: "host"
+          description: "The name of the host to update."
+          type: "string"
+          required: true
+          
+        - in: "body"
+          name: "body"
+          description: "A valid Host request object."
+          required: true
+          schema: 
+            $ref: "#/definitions/HostRequest"
+            
+      responses:
+        200:
+          description: "Success."
+          schema:
+            type: "object"
+            $ref: "#/definitions/ApplicationResponse"
+        405:
+          description: "Validation exception."
+        404:
+          description: "Application not found."
+        400:
+          description: "Invalid name supplied."            
+
+
 definitions:
+
+  ## Application Response Object ##        
+  ApplicationRequest:
+    description: "The abstract Application details required to create and update."
+    type: "object"
+    additionalProperties: false
+    properties:
+      permalink:
+        description: "A unique dot separated path to the Application instance."
+        type: "string"
+        
+      name:
+        description: "The lowercase and dash-separated canonical name for this application."
+        type: "string"
+        
+      description:
+        description: "Unambiguously describes this specific SJC application."
+        type: "string"
+      
+      address: 
+        description: "The production/public domain."
+        type: "string"
+      
+      bugs:
+        description: "The web address of the issue tracker."
+        type: "string"
+        
+      docs:
+        description: "The web address of the wiki or documentation repository."         
+        type: "string"
+        
+      git: 
+        description: "The Git remote this instance is tied to."
+        type: "object"
+        properties:
+          ssh:
+            description: "The Git/SSH URL if it exists."
+            type: "string"
+          https:
+            description: "The https URL if it exists."
+            type: "string"
+
+      tags:
+        description: "Free form tags for additional categorization."
+        type: "array"
+        items: 
+          type: "string"
 
         
   ## Application Response Object ##        
   ApplicationResponse:
     description: "An Application Object including previously system generated UUID and ephemeralPort."
     type: "object"
-
+    additionalProperties: false
     properties:
-    
-      name:
+      permalink:
+        description: "A unique dot separated path to the Application instance."
         type: "string"
+        
+      name:
         description: "The lowercase and dash-separated canonical name for this application."
+        type: "string"
         
       description:
-        type: "string"
         description: "Unambiguously describes this specific SJC application."
+        type: "string"
       
       address: 
-        type: "string"
         description: "The production/public domain."
-        
-      version:
         type: "string"
-        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
       
       bugs:
-        type: "string"
         description: "The web address of the issue tracker."
+        type: "string"
         
       docs:
+        description: "The web address of the wiki or documentation repository."         
         type: "string"
-        description: "The web address of the wiki or documentation repository."            
-          
-      branch:
-        type: "string"
-        description: "The repository branch name for a specific instance of this application"
-
         
-      branches:
-        type: "array"
-        items:
-          $ref: "#/definitions/BranchDefinition"
-        
-
-          
-      cnames:
-        type: "array"
-        description: "List of cnames used to access this instance"
-        items:
-          $ref: "#/definitions/CNameDefinition"
-        
-      host:
-        type: "string"
-        description: "The host environment currently expected to be localhost or AWS."
-        
-
-
-
-      ephemeralPort:
-        type: "string"
-        format: "int32"
-        
-
-      healthCheck:
-        type: "string"
-        description: "Placeholder while we expand the idea of a heartbeat-like feature."
-        format: "uri"
-        
-
-      remotes:
+      git: 
+        description: "The Git remote this instance is tied to."
         type: "object"
-        description: "Git repositories."
-        additionalProperties:
-          $ref: "#/definitions/GitRemote"
+        properties:
+          ssh:
+            description: "The Git/SSH URL if it exists."
+            type: "string"
+          https:
+            description: "The https URL if it exists."
+            type: "string"
 
-      testRunners:
+      refs:
+        description: "A hash of all known refs (aka branches) including instance meta if available."
         type: "object"
-        description: "A list of available test runners that can be invoked within a running application instance."
         additionalProperties:
-          $ref: "#/definitions/TestRunnerDefinition"
-
-
+          $ref: "#/definitions/RefDefinition"
+          
       tags:
+        description: "Free form tags for additional categorization."
         type: "array"
         items: 
           type: "string"
 
+      audit:
+        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
+        type: "object"
+        $ref: "#/definitions/AuditInfo"
+    
+    
+  RefRequest:
+    description: "A Reference request object specifically for POST/PUT."
+    type: "object"
+    additionalProperties: false
+    $ref: "#/definitions/RefDefinition"
+    
+    
+  HostRequest:
+    description: "A Host (aka Target) request object specifically for POST/PUT."
+    type: "object"
+    additionalProperties: false
+    $ref: "#/definitions/HostDefinition"
+    
+    
+  RefDefinition:
+    description: "A git ref or branch plus additional meta describing the version, target envs, etc."
+    type: "object"
+    additionalProperties: false
+    properties:
+      version: 
+        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
+        type: "string"
+        format: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+      hosts:
+        type: "object"
+        additionalProperties: 
+          $ref: "#/definitions/HostDefinition"
+          
+      testRunners:
+        type: "object"
+        additionalProperties:
+          $ref: "#/definitions/TestRunnerDefinition"
+          
       commands:
         type: "object"
-        description: "Zero, one or more shell commands."
-        
-        $ref: "#/definitions/CommandDefinition"
-
+        additionalProperties:
+          $ref: "#/definitions/CommandDefinition"
+          
       services:
         type: "object"
-        description: "For now, a wrapper around Docker file."
         additionalProperties:
           $ref: "#/definitions/ServiceDefinition"
-
-
-      audit:
-        type: "object"
-        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
-        $ref: "#/definitions/AuditInfo"
-        
-        
-
-
-
-      
-  BranchDefinition:
-    description: "An atomic branch record."
+          
+    
+  HostDefinition:
+    description: ""
     type: "object"
-    properties:
-      X:
-        type: "string"
+    
       
-  ## CName Definition ##
-  CNameDefinition:
-    description: "An internet cannonical name."
-    type: "string"
- 
-  ## Service Definition ##     
+  TestRunnerDefinition:
+    description: "Everything needed to run some sort of unit tests. Technology agnostic."
+    type: "object"
+    additionalProperties: 
+      type: "string"
+      
+
   ServiceDefinition:
     description: "Is this a docker file?"
     type: "object"
-    properties:
-      name:
-        type: "string"
-        description: "Arbitrary and application unique name for the service."
-      data:
-        type: "object"
-        description: "an object."
-        
-  ## TestRunner Definition ##        
-  TestRunnerDefinition:
-    description: "Meta information required to execute a test suite."
-    type: "object"
-    properties:
-      name:
-        type: "string"
-        description: "Arbitrary and application unique name for the test runner."
-      runner:
-        type: "object"
-        description: "Details, yet to be determined."
-        
-  ## Command Definition ##        
+
+    
   CommandDefinition:
     description: "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version."
-    type: "object"
-    properties:
-      name:
-        type: "string"
-        description: "A unique name or key to reference the command."
-      command:
-        type: "string"
-        description: "The full command line to execute."
-        
-  ## Git Remote Definition ##        
-  GitRemote:
-    description: "Describes a remote reference to a Git repository."
-    type: "object"
-    properties:
-      name:
-        type: string
-        description: "E.g. origin, gitlab, corpus, etc."
-      uri:
-        type: string
+    type: "string"
+    
 
-  ## Application Target Definition        
-  AppTarget:
-    description: "Application Targets are host environments that can run SJC applications. Since SJC applications are currently web based valid targets can be local development environments as well as cloud platforms like AWS. Future consideration may be given to hosting non web applications including native executables for mobile and desktop."
-    type: "object"
-    required:
-    - "name"
-    properties:
-      audit:
-        $ref: "#/definitions/AuditInfo"
-      description:
-        type: "string"
-      endPoint:
-        type: "string"
-      name:
-        type: "string"
-      provider:
-        type: "string"
-      tag:
-        type: "string"
-  AppTemplate:
-    description: "An Application Template describes an SJC standard stack plus mandatory components. Such stacks will includine LAMP, Wordpress, MEAN and Python + Django + Postgress."
-    type: "object"
-    required:
-    - "name"
-    properties:
-      audit:
-        $ref: "#/definitions/AuditInfo"
-      description:
-        type: "string"
-      docker:
-        type: "string"
-      name:
-        type: "string"
-      provider:
-        type: "string"
-      tag:
-        type: "string"
-        
   AuditInfo:
     description: "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
     type: "object"
@@ -259,6 +515,7 @@ definitions:
             type: "string"
           on: 
             type: "string"
+            format: "date-time"
       updated:
         type: "object"
         properties:
@@ -266,10 +523,13 @@ definitions:
             type: "string"
           on: 
             type: "string"
-
+            format: "date-time"
             
-  ErrorModel:
-    type: "object"
+            
+            
+      
+            
+  ErrorResponse:
     required:
     - "code"
     - "message"
@@ -279,9 +539,13 @@ definitions:
         format: "int32"
       message:
         type: "string"
-  ErrorResponse:
-    required:
-    - "message"
-    properties:
-      message:
-        type: "string"
+
+securityDefinitions:
+  auth:
+    type: "oauth2"
+    authorizationUrl: "https://app-reg.sjc.io/api/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write_reg: "Write to the registry."
+      read_reg: "Read from the registry."
+        

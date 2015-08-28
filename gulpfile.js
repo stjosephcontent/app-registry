@@ -1,23 +1,9 @@
-var gulp = require("gulp"),
-   groc = require("gulp-groc"),
-   clean = require("gulp-clean");
+﻿var gulp = require("gulp"),
+   yaml = require("gulp-yaml");
 
-// clean doc 
-gulp.task("cleanDoc", function () {
-   return gulp.src(["jsdoc"], {
-      read: false
-   }).pipe(clean());
-});
-
-// gulp-groc 
-gulp.task("doc", ["cleanDoc"], function () {
-   return gulp
-        .src("./api/**/*.js")
-        .pipe(groc({
-      out: "jsdoc"
-   }));
-});
 
 gulp.task("default", function () {
-  // place code for your default task here
+   gulp.src("./api/swagger/swagger.yaml")
+  .pipe(yaml({ "space": 3, "safe": true }))
+  .pipe(gulp.dest("./api/swagger"))
 });

@@ -1,0 +1,167 @@
+﻿{
+   "ApplicationResponse": {
+      "permalink": "cms.cerebrum",
+      "name": "cerebrum CMS",
+      "description": "a darn cool program",
+      "address": "cms.cerebrum",
+      "bugs": "https://stjosephcontent.atlassian.net/projects/CE",
+      "docs": "https://stjosephcontent.atlassian.net/wiki/display/CE/Cerebrum+Home",
+
+      "git": {
+         "ssh": "",
+         "https": "https://github.com/stjosephcontent/cerebrum"
+      },
+
+      "refs": {
+         "master": {
+            "version": "1.2.0",
+            "hosts": {
+               "stage": {
+                  "hostname": "ecs-stage-cluster.sjc.io",
+                  "cnames": [ "stage.brandstem.ca" ]
+               },
+               "prod": {
+                  "hostname": "ecs-production-cluster.sjc.io",
+                  "cnames": [ "brandstem.ca", "www.brandstem,ca" ]
+               }
+            }
+         },
+         "develop": {
+            "version": "1.3.0",
+
+            "hosts": {
+               "stage": {
+                  "hostname": "ecs-test-cluster.sjc.io",
+                  "cnames": [ "integration.brandstem.ca" ]
+               }
+            }
+         },
+
+         "cli-15-my-branch": {
+            "version": "1.3.1",
+            "hosts": {
+               "dev-tforster": {
+                  "hostname": "174.117.35.248",
+                  "cnames": [ "localhost" ]
+               },
+               "seansMacBook": {
+                  "hostname": "192.168.10.23",
+                  "cnames": [ "localhost" ]
+               }
+            },
+            "testRunners": {
+               "angular": { },
+               "postman": { },
+               "server": { }
+            },
+
+            "commands": {
+               "command1": "by your command.",
+               "command2": "these are not the droids you are looking for."
+
+            },
+
+            "services": {
+               "webserver": {
+                  "build": "./webserver",
+                  "ports": [ 80 ],
+                  "volumes": [ "./webserver/sourcecode:/var/www/html", "./webserver/logz:/var/log/apache2" ],
+                  "ambassador": true,
+                  "links": "mysql"
+               },
+               "mysql": {
+                  "build": "./mysql"
+               }
+            }
+         },
+
+         "517516e36c04d8031f561c0d4b344bae3503aa6e": {
+            "version": "1.2.9",
+            "hosts": {
+               "dev-tforster": {
+                  "hostname": "174.117.35.248",
+                  "cnames": [ "localhost" ]
+               },
+               "seansMacBook": {
+                  "hostname": "192.168.10.23",
+                  "cnames": [ "localhost" ]
+               }
+            }
+         }
+      },
+
+      "tags": [
+         "tag-1",
+         "tag-2"
+      ],
+
+      "audit": {
+         "created": {
+            "by": "tforster",
+            "on": "2015-08-24T17:08:02.078Z"
+         },
+         "updated": {
+            "by": "smacdonald",
+            "on": "2015-08-24T17:08:02.078Z"
+         }
+      }
+   },
+
+   "ApplicationRequest": {
+      "permalink": "cms.cerebrum",
+      "name": "cerebrum CMS",
+      "description": "a darn cool program",
+      "address": "cms.cerebrum",
+      "bugs": "https://stjosephcontent.atlassian.net/projects/CE",
+      "docs": "https://stjosephcontent.atlassian.net/wiki/display/CE/Cerebrum+Home",
+
+      "git": {
+         "ssh": "",
+         "https": "https://github.com/stjosephcontent/cerebrum"
+      },
+
+      "refs": { },
+
+      "tags": [
+         "tag-1",
+         "tag-2"
+      ]
+   },
+
+   "RefRequest": {
+      "version": "1.3.1",
+
+      "hosts": { },
+
+      "testRunners": {
+         "angular": { },
+         "postman": { },
+         "server": { }
+      },
+
+      "commands": {
+         "command1": "by your command.",
+         "command2": "these are not the droids you are looking for."
+      },
+
+      "services": {
+         "webserver": {
+            "build": "./webserver",
+            "ports": [ 80 ],
+            "volumes": [ "./webserver/sourcecode:/var/www/html", "./webserver/logz:/var/log/apache2" ],
+            "ambassador": true,
+            "links": "mysql"
+         },
+         "mysql": {
+            "build": "./mysql"
+         }
+      }
+   },
+
+   "HostRequest": {
+      "stage": {
+         "hostname": "ecs-test-cluster.sjc.io",
+         "cnames": [ "integration.brandstem.ca" ]
+      }
+   }
+}

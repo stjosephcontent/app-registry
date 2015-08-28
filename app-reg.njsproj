@@ -20,7 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="api\mocks\README.md" />
+    <Content Include="api\mocks\mock-data.json" />
     <Content Include="api\swagger\swagger.yaml" />
     <Content Include="config\default.yaml" />
     <Content Include="config\README.md" />
@@ -44,8 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api\controllers\ApplicationsController.js" />
+    <Compile Include="api\controllers\TargetsController.js" />
     <Compile Include="api\helpers\ApplicationModel.js" />
     <Compile Include="api\helpers\AppReg.js" />
+    <Compile Include="api\mocks\ApplicationsController.js" />
     <Compile Include="app.js" />
     <Compile Include="test\api\controllers\ApplicationController.js" />
     <Compile Include="test\api\helpers\AppReg.js" />
