@@ -1,10 +1,19 @@
 ﻿"use strict";
 
 var util = require("util"),
-   mockData = require("./mock-data.json");
+   mockData = require("../mocks/mock-data.json");
 
 module.exports = {
-   ReadApplications: ReadApplications
+   ReadApplications: ReadApplications,
+   ReadApplication: ReadApplication,
+   CreateApplication: CreateApplication,
+   UpdateApplication: UpdateApplication,
+   
+   CreateApplicationRef: CreateApplicationRef,
+   UpdateApplicationRef: UpdateApplicationRef,
+   
+   CreateApplicationRefTarget: CreateApplicationRefTarget,
+   UpdateApplicationRefTarget: UpdateApplicationRefTarget
 };
 
 function ReadApplications(req, res, next) {
@@ -14,31 +23,31 @@ function ReadApplications(req, res, next) {
 
 
 function ReadApplication(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequeset);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
-function CreateAplication(req, res, next) {
-   res.status(501);
+function CreateApplication(req, res, next) {
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplication(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function CreateApplicationRef(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplicationRef(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function CreateApplicationRefTarget(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplicationRefTarget(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 

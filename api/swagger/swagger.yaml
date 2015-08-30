@@ -9,7 +9,7 @@ info:
   license:
     name: ""
 host: "localhost:10010"
-basePath: "/api/v1/"
+basePath: "/api/v1"
 schemes:
 - "http"
 
@@ -51,7 +51,7 @@ paths:
           
    
 
-  /applications/{application}/:
+  /applications/{application}:
     x-swagger-router-controller: "ApplicationsController"
     get:
       description: "Read a specific application with deep Ref object."
@@ -334,8 +334,11 @@ definitions:
   ApplicationRequest:
     description: "The abstract Application details required to create and update."
     type: "object"
+    required:
+    - "name"
     additionalProperties: false
     properties:
+    
       permalink:
         description: "A unique dot separated path to the Application instance."
         type: "string"

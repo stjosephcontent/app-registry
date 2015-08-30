@@ -26,28 +26,28 @@ function ReadApplication(req, res, next) {
    res.status(200).json(mockData.ApplicationRequest);
 }
 
-function CreateAplication(req, res, next) {
-   res.status(501);
+function CreateApplication(req, res, next) {
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplication(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function CreateApplicationRef(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplicationRef(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function CreateApplicationRefTarget(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 function UpdateApplicationRefTarget(req, res, next) {
-   res.status(501);
+   res.status(200).json(mockData.ApplicationRequest);
 }
 
 

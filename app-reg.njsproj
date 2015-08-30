@@ -49,6 +49,7 @@
     <Compile Include="api\helpers\AppReg.js" />
     <Compile Include="api\mocks\ApplicationsController.js" />
     <Compile Include="app.js" />
+    <Compile Include="gulpfile.js" />
     <Compile Include="test\api\controllers\ApplicationController.js" />
     <Compile Include="test\api\helpers\AppReg.js" />
   </ItemGroup>

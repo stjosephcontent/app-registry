@@ -119,9 +119,7 @@
          "ssh": "",
          "https": "https://github.com/stjosephcontent/cerebrum"
       },
-
-      "refs": { },
-
+     
       "tags": [
          "tag-1",
          "tag-2"
