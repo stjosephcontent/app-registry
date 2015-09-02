@@ -441,15 +441,28 @@ definitions:
     $ref: "#/definitions/HostDefinition"
 
   GitRemotesDefinition:
-     description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
-     type: "object"
-     properties:
-       origin:
-         type: "string"
-         description: "the git remote known as 'origin'"
-     additionalProperties: true
-     required:
-       - "origin"
+      description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
+      type: "object"
+      required:
+        - "origin"
+      properties:
+        origin:
+          $ref: "#/definitions/Git"
+      additionalProperties:
+        $ref: "#/definitions/Git"
+
+  Git: 
+    description: "(One of) the Git remote(s) this instance is tied to."
+    type: "object"
+    properties:
+      ssh:
+        description: "The Git/SSH URL if it exists."
+        type: "string"
+        format: "uri"
+      https:
+        description: "The https URL if it exists."
+        type: "string"
+        format: "uri"
 
   RefDefinition:
     description: "A git ref or branch plus additional meta describing the version, target envs, etc."
