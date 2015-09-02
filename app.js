@@ -50,6 +50,6 @@ SwaggerExpress.create(config, function (err, swaggerExpress) {
    var port = process.env.PORT || 10010;
    port = 10010; // to-do get from swagger file 
    app.listen(port);
-   
-   console.log("try this:\ncurl http://127.0.0.1:" + port + "/hello?name=Scott");
+    
+   console.log("try this:\ncurl http://127.0.0.1:" + port + "/api/v1/applications");
 });
