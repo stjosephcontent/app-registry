@@ -1,0 +1,11 @@
+gui:
+  build: ./qdgui
+  ports:
+   - "8080:8080"
+  volumes:
+   - ./qdgui:/usr/src/app
+  links:
+   - mongo
+mongo:
+  image: mongo
+  #image: sean9999/appreg-mongo
