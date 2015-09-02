@@ -1,7 +1,8 @@
 ﻿"use strict";
 
 var util = require("util"),
-   mockData = require("../mocks/mock-data.json");
+   mockData = require("../mocks/mock-data.json"),
+   application = require("../helpers/ApplicationModel.js");
 
 module.exports = {
    ReadApplications: ReadApplications,
@@ -27,7 +28,16 @@ function ReadApplication(req, res, next) {
 }
 
 function CreateApplication(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
+   application.create(req.swagger.params.body.value)
+   .then(function () { 
+      res.status(200).json(mockData.ApplicationResponse);
+   })
+   .catch(function (reason) {
+      console.error(reason);
+      res.status(400);
+   });
+
+   
 }
 
 function UpdateApplication(req, res, next) {

@@ -21,6 +21,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.12.3",
+    "mongodb": "^2.0.42",
+    "nconf": "^0.7.2",
     "swagger-express-mw": "0.0.x"
   },
   "devDependencies": {

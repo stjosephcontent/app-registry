@@ -1,0 +1,6 @@
+﻿{
+   "port": 10010,
+   "db": {
+      "connectionString": "mongodb://localhost:27017/app-reg"
+   }
+}

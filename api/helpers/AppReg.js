@@ -1,16 +1,13 @@
 ﻿"use strict"
 
-var path = require("path"), 
-   basePath = path.dirname(require.main.filename);
+var DatabaseModel = require("./MongoWrapper.js"),
+   ApplicationModel = require("./ApplicationModel.js");
 
 // **Constructor**
- var appReg = function () {
+var appReg = function () {
    this.options = {};
 }
 module.exports = new appReg();
-//module.exports = {
-//   appReg: new appReg()
-//};
 
 
 /* ##theprojecthive.prototype.init
@@ -24,30 +21,27 @@ module.exports = new appReg();
  * - *cb*: callback function
  * - - - 
  */
-appReg.prototype.init = function (options) {
+appReg.init = function (options) {
    var self = this;
-   this.options = options;
    
-   //aws.config.update({
-   //   accessKeyId: options.S3.AWS_ACCESS_KEY,
-   //   secretAccessKey: options.S3.AWS_SECRET_KEY
-   //});
-   
-   //var initPromises = [
-   //   utils.init(options),
-   //   AssetClass.init(options),
-   //   ClientClass.init(options),
-   //   CommentClass.init(options),
-   //   ErrorClass.init(options),
-   //   FolderClass.init(options),
-   //   PermissionClass.init(options),
-   //   ProjectClass.init(options),
-   //   SimpleAuthClass.init(options.users),
-   //   UserClass.init(options)
-   //];
-   //Promise.all(initPromises).then(function (ok) {
-   //   cb(ok);
-   //}).catch(function (reason) {
-   //   console.error(reason);
-   //});
+   return new Promise(function (resolve, reject) {      
+      
+      var promises = [
+         ApplicationModel.init(options),
+         DatabaseModel.init(options.db)
+      ]
+      
+      Promise.all(promises)
+      .then(function (results) { 
+         console.log(results);
+         resolve();
+      })
+      .catch(function () { 
+         reject();
+      });
+
+   });
 }
+
+
+module.exports = appReg;

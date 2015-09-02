@@ -1,4 +1,8 @@
-﻿"use strict";
+﻿/*
+ * M O C K 
+ */
+
+"use strict";
 
 var util = require("util"),
    mockData = require("../mocks/mock-data.json");
