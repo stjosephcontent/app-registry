@@ -2,6 +2,13 @@
 
 Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API.
 
+## Getting Started
+
+```bash
+$ npm install -g swagger
+$ swagger project edit
+```
+
 ## Useful Links
 
 * [Confluence Wiki](https://stjosephcontent.atlassian.net/wiki/display/CLI/App+Registry)
