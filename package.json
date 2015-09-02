@@ -1,6 +1,6 @@
 {
   "name": "application-registry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API.",
   "main": "app.js",
   "directories": {},

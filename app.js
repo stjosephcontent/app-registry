@@ -85,6 +85,6 @@ SwaggerExpress.create(config, function (err, swaggerExpress) {
    var port = process.env.PORT || config.port;
    port = config.port;
    app.listen(port);
-   console.log("Listening...");
+   console.log("Listening...");    
+   console.log("try this:\ncurl http://127.0.0.1:" + port + "/api/v1/applications");
 });
-
