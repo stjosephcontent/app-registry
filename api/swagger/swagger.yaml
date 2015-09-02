@@ -22,7 +22,7 @@ paths:
   ## All applications
   /applications:
     x-swagger-router-controller: "ApplicationsController"
-    
+
     get:
       description: "Read all Applications from the registry."
       operationId: "ReadApplications"
@@ -30,7 +30,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       responses:
         200:
           description: "Success."
@@ -44,12 +44,10 @@ paths:
           description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-      
+
     #  security:
      #   - auth:
       #    - "write_reg"
-          
-   
 
   /applications/{application}:
     x-swagger-router-controller: "ApplicationsController"
@@ -60,14 +58,14 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
           description: "The name of the application to read."
           type: "string"
           required: true
-   
+
       responses:
           200:
             description: "Success."
@@ -79,7 +77,7 @@ paths:
             description: "Error"
             schema:
               $ref: "#/definitions/ErrorResponse"
-          
+
     post:
       description: "Create a new Application in the registry."
       operationId: "CreateApplication"
@@ -87,21 +85,21 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
           description: "The name of the application to create."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Application request object."
           required: true
           schema: 
             $ref: "#/definitions/ApplicationRequest"
-            
+
       responses:
         200: 
           description: "Success."
@@ -112,7 +110,7 @@ paths:
           description: "Error."
           schema:
             $ref: "#/definitions/ErrorResponse"
-      
+
     put:
       description: "Update an Application object."
       operationId: "UpdateApplication"
@@ -120,21 +118,21 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
           description: "The name of the application to add the ref to."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Application request object."
           required: true
           schema: 
             $ref: "#/definitions/ApplicationRequest"
-            
+
       responses:
         200:
           description: "Success."
@@ -148,7 +146,6 @@ paths:
         400:
           description: "Invalid name supplied."            
 
-          
   /applications/{application}/{ref}:
     x-swagger-router-controller: "ApplicationsController"
     post:
@@ -158,7 +155,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
@@ -171,14 +168,14 @@ paths:
           description: "The name of the ref to create."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Ref request object."
           required: true
           schema: 
             $ref: "#/definitions/RefRequest"
-            
+
       responses:
         200: 
           description: "Success."
@@ -189,7 +186,7 @@ paths:
           description: "Error."
           schema:
             $ref: "#/definitions/ErrorResponse"
-      
+
     put:
       description: "Update an Application's Ref object."
       operationId: "UpdateApplicationRef"
@@ -197,7 +194,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
@@ -210,14 +207,14 @@ paths:
           description: "The name of the ref to create."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Ref request object."
           required: true
           schema: 
             $ref: "#/definitions/RefRequest"
-            
+
       responses:
         200:
           description: "Success."
@@ -230,8 +227,7 @@ paths:
           description: "Application not found."
         400:
           description: "Invalid name supplied."            
- 
-            
+
   /applications/{application}/{ref}/{host}:
     x-swagger-router-controller: "ApplicationsController"
     post:
@@ -241,7 +237,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
@@ -254,20 +250,20 @@ paths:
           description: "The name of the ref to create."
           type: "string"
           required: true
-          
+
         - in: "path"
           name: "host"
           description: "The name of the host to create."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Host (aka Target) request object."
           required: true
           schema: 
             $ref: "#/definitions/HostRequest"
-            
+
       responses:
         200: 
           description: "Success."
@@ -278,8 +274,7 @@ paths:
           description: "Error."
           schema:
             $ref: "#/definitions/ErrorResponse"
-      
-          
+
     put:
       description: "Update a target on a specific Application and Ref."
       operationId: "UpdateApplicationRefTarget"
@@ -287,7 +282,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-          
+
       parameters:
         - in: "path"
           name: "application"
@@ -300,20 +295,20 @@ paths:
           description: "The name of the ref to update."
           type: "string"
           required: true
-          
+
         - in: "path"
           name: "host"
           description: "The name of the host to update."
           type: "string"
           required: true
-          
+
         - in: "body"
           name: "body"
           description: "A valid Host request object."
           required: true
           schema: 
             $ref: "#/definitions/HostRequest"
-            
+
       responses:
         200:
           description: "Success."
@@ -338,31 +333,31 @@ definitions:
     - "name"
     additionalProperties: false
     properties:
-    
+
       permalink:
         description: "A unique dot separated path to the Application instance."
         type: "string"
-        
+
       name:
         description: "The lowercase and dash-separated canonical name for this application."
         type: "string"
-        
+
       description:
         description: "Unambiguously describes this specific SJC application."
         type: "string"
-      
+
       address: 
         description: "The production/public domain."
         type: "string"
-      
+
       bugs:
         description: "The web address of the issue tracker."
         type: "string"
-        
+
       docs:
         description: "The web address of the wiki or documentation repository."         
         type: "string"
-        
+
       git: 
         description: "The Git remote this instance is tied to."
         type: "object"
@@ -380,7 +375,6 @@ definitions:
         items: 
           type: "string"
 
-        
   ## Application Response Object ##        
   ApplicationResponse:
     description: "An Application Object including previously system generated UUID and ephemeralPort."
@@ -390,44 +384,39 @@ definitions:
       permalink:
         description: "A unique dot separated path to the Application instance."
         type: "string"
-        
+
       name:
         description: "The lowercase and dash-separated canonical name for this application."
         type: "string"
-        
+
       description:
         description: "Unambiguously describes this specific SJC application."
         type: "string"
-      
+
       address: 
         description: "The production/public domain."
         type: "string"
-      
+
       bugs:
         description: "The web address of the issue tracker."
         type: "string"
-        
+
       docs:
         description: "The web address of the wiki or documentation repository."         
         type: "string"
-        
+
       git: 
-        description: "The Git remote this instance is tied to."
+        description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
         type: "object"
-        properties:
-          ssh:
-            description: "The Git/SSH URL if it exists."
-            type: "string"
-          https:
-            description: "The https URL if it exists."
-            type: "string"
+        additionalProperties:
+          $ref: "#/definitions/GitRemotesDefinition"
 
       refs:
         description: "A hash of all known refs (aka branches) including instance meta if available."
         type: "object"
         additionalProperties:
           $ref: "#/definitions/RefDefinition"
-          
+
       tags:
         description: "Free form tags for additional categorization."
         type: "array"
@@ -438,22 +427,30 @@ definitions:
         description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
         type: "object"
         $ref: "#/definitions/AuditInfo"
-    
-    
+
   RefRequest:
     description: "A Reference request object specifically for POST/PUT."
     type: "object"
     additionalProperties: false
     $ref: "#/definitions/RefDefinition"
-    
-    
+
   HostRequest:
     description: "A Host (aka Target) request object specifically for POST/PUT."
     type: "object"
     additionalProperties: false
     $ref: "#/definitions/HostDefinition"
-    
-    
+
+  GitRemotesDefinition:
+     description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
+     type: "object"
+     properties:
+       origin:
+         type: "string"
+         description: "the git remote known as 'origin'"
+     additionalProperties: true
+     required:
+       - "origin"
+
   RefDefinition:
     description: "A git ref or branch plus additional meta describing the version, target envs, etc."
     type: "object"
@@ -468,44 +465,39 @@ definitions:
         type: "object"
         additionalProperties: 
           $ref: "#/definitions/HostDefinition"
-          
+
       testRunners:
         type: "object"
         additionalProperties:
           $ref: "#/definitions/TestRunnerDefinition"
-          
+
       commands:
         type: "object"
         additionalProperties:
           $ref: "#/definitions/CommandDefinition"
-          
+
       services:
         type: "object"
         additionalProperties:
           $ref: "#/definitions/ServiceDefinition"
-          
-    
+
   HostDefinition:
     description: ""
     type: "object"
-    
-      
+
   TestRunnerDefinition:
     description: "Everything needed to run some sort of unit tests. Technology agnostic."
     type: "object"
     additionalProperties: 
       type: "string"
-      
 
   ServiceDefinition:
     description: "Is this a docker file?"
     type: "object"
 
-    
   CommandDefinition:
     description: "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version."
     type: "string"
-    
 
   AuditInfo:
     description: "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
@@ -527,11 +519,7 @@ definitions:
           on: 
             type: "string"
             format: "date-time"
-            
-            
-            
-      
-            
+
   ErrorResponse:
     required:
     - "code"
@@ -551,4 +539,3 @@ securityDefinitions:
     scopes:
       write_reg: "Write to the registry."
       read_reg: "Read from the registry."
-        
