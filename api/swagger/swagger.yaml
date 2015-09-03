@@ -405,12 +405,17 @@ definitions:
         description: "The web address of the wiki or documentation repository."         
         type: "string"
 
-      git: 
-        description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
-        type: "object"
-        additionalProperties:
-          $ref: "#/definitions/GitRemotesDefinition"
-
+      remotes:
+         description: "a hash of Git remotes that requires at minimum an origin property."
+         type: "object"
+         required:
+         - "origin"
+         properties:
+           origin:
+             $ref: "#/definitions/GitDefinition"
+         additionalProperties:
+            $ref: "#/definitions/GitDefinition"
+          
       refs:
         description: "A hash of all known refs (aka branches) including instance meta if available."
         type: "object"
@@ -441,17 +446,15 @@ definitions:
     $ref: "#/definitions/HostDefinition"
 
   GitRemotesDefinition:
-      description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
+      description: "a hash of Git remotes that requires at minimum an origin property."
       type: "object"
       required:
-        - "origin"
+         - "origin"
       properties:
         origin:
-          $ref: "#/definitions/Git"
-      additionalProperties:
-        $ref: "#/definitions/Git"
+          $ref: "#/definitions/GitDefinition"
 
-  Git: 
+  GitDefinition: 
     description: "(One of) the Git remote(s) this instance is tied to."
     type: "object"
     properties:
@@ -460,7 +463,7 @@ definitions:
         type: "string"
         format: "uri"
       https:
-        description: "The https URL if it exists."
+        description: "The HTTPS URL if it exists."
         type: "string"
         format: "uri"
 
@@ -544,29 +547,9 @@ definitions:
       message:
         type: "string"
   
-  GitRemotesDefinition:
-    description: "a hash that goes origin: url, where URLs are specially formatted git URLs"
-    type: "object"
-    required:
-      - "origin"
-    properties:
-      origin:
-        $ref: "#/definitions/Git"
-    additionalProperties:
-      $ref: "#/definitions/Git"
+
       
-  Git: 
-    description: "The Git remote this instance is tied to."
-    type: "object"
-    properties:
-      ssh:
-        description: "The Git/SSH URL if it exists."
-        type: "string"
-        format: "uri"
-      https:
-        description: "The https URL if it exists."
-        type: "string"
-        format: "uri"
+
 
 
 

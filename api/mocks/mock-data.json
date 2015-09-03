@@ -7,9 +7,15 @@
       "bugs": "https://stjosephcontent.atlassian.net/projects/CE",
       "docs": "https://stjosephcontent.atlassian.net/wiki/display/CE/Cerebrum+Home",
 
-      "git": {
-         "ssh": "",
-         "https": "https://github.com/stjosephcontent/cerebrum"
+      "remotes": {
+         "not-origin-to-test-required-param": {
+            "ssh": "ssh://hello",
+            "https": "http://goodbye"
+         },
+         "origin": {
+            "ssh": "ssh://hello",
+            "https": "http://goodbye"
+         }
       },
 
       "refs": {
@@ -119,7 +125,7 @@
          "ssh": "",
          "https": "https://github.com/stjosephcontent/cerebrum"
       },
-     
+
       "tags": [
          "tag-1",
          "tag-2"
