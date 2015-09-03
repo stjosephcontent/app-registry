@@ -16,7 +16,6 @@ ApplicationModel.init = function (options) {
 // Static methods
 
 ApplicationModel.create = function (applicationObject) {
-   var self = this;
    // For now assumes we have a correct Application object passed in from the controller. We can add Swagger validation here later if necessary.
    return new Promise(function (resolve, reject) {
       mongoWrapper.db.collection("Applications").insert(applicationObject, function (err, result) {
@@ -30,6 +29,18 @@ ApplicationModel.create = function (applicationObject) {
    });
 }
 
+ApplicationModel.readAll = function () {
+   return new Promise(function (resolve, reject) {
+      mongoWrapper.db.collection("Applications").insert(applicationObject, function (err, result) {
+         if (err) {
+            reject(err);
+         }
+         else {
+            resolve(result);
+         }
+      });
+   });
+}
 
 // Instance Methods
 
