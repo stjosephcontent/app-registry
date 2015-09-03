@@ -6,6 +6,11 @@ gui:
    - ./qdgui:/usr/src/app
   links:
    - mongo
+  stdin_open: true
+  tty: true
+  labels:
+    io.sjc.manager: "orchestra v0.0.1"
 mongo:
   image: mongo
-  #image: sean9999/appreg-mongo
+  labels:
+    io.sjc.manager: "orchestra v0.0.1"
