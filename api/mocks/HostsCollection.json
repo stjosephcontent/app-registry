@@ -1,0 +1,16 @@
+﻿{
+   "dev": {
+      "localhost": { }
+   },
+
+   "stage": {
+      "stage.sjc.io": {
+         "name": "ecs"
+      },
+      "45.55.44.158": {
+         "name": "digital-ocean"
+      }
+   },
+
+   "prod": { }
+}

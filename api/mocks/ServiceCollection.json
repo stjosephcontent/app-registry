@@ -1,0 +1,49 @@
+﻿/* A pseudo sample of what the Service Collection in MongoDB might look like */
+{
+   "mongodb": {
+      "description": "Implements a non-clustered MongoDb 3.0.6 database server.",
+      "type": "server.db",
+      "language": "javascript",
+      "ports": [ 27017 ],
+      "version": "3.0.6",
+      "docker": { }
+   },
+
+   "postgres": {
+      "description": "Implements a non-clustered Postgres x.y.z database server.",
+      "type": "server.db",
+      "language": "sql",
+      "ports": [ ? ],
+      "version": "?",
+      "docker": { }
+   },
+
+   "django": {
+      "description": "",
+      "type": "server.app",
+      "language": "python",
+      "ports": [ 80, 443 ],
+      "version": "0.12.7",
+      "docker": { }
+   },
+
+   "nodejs": {
+      "description": "",
+      "type": "server.app",
+      "language": "javascript",
+      "ports": [ 80, 443 ],
+      "version": "0.12.7",
+      "docker": { }
+   },
+
+   "external": {
+      "description": "An external API such as Twitter, Facebook, YouTube, etc.",
+      "type": "webservice",
+      "langauge": "unknown",
+      "ports": [ ],
+      "version": "1.0.0",
+      "docker": null
+   }
+}
+
+
