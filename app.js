@@ -3,9 +3,12 @@
 var SwaggerExpress = require("swagger-express-mw"),
    app = require("express")(),
    nconf = require("nconf"),
+   ProjectModel = require("./api/helpers/ProjectModel.js"),  
    ApplicationModel = require("./api/helpers/ApplicationModel.js"),  
+   RefModel = require("./api/helpers/RefModel.js"),  
+   ServiceModel = require("./api/helpers/ServiceModel.js"),  
    MongoWrapper = require("./api/helpers/MongoWrapper.js");
-   
+
 
 module.exports = app; // for testing
 
@@ -18,7 +21,7 @@ config.appRoot = __dirname;
 app.use(function (req, res, next) {
    res.header("Access-Control-Allow-Origin", "*");
    res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS");
-   res.header("Access-Control-Expose-Headers", "x-auth-simple, Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization");
+   //res.header("Access-Control-Expose-Headers", "x-auth-simple, Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization");
    res.header("Access-Control-Allow-Headers", "x-auth-simple, Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization");
    next();
 });
@@ -29,7 +32,10 @@ MongoWrapper.init(config.db).then(function (result) {
 })
 .then(function () {
    var promises = [
-      ApplicationModel.init(config)
+      ProjectModel.init(config),
+      ApplicationModel.init(config),
+      RefModel.init(config),
+      ServiceModel.init(config)
    ];
    Promise.all(promises).then(function (results) {
       console.log(results);
@@ -67,6 +73,7 @@ SwaggerExpress.create(config, function (err, swaggerExpress) {
    
    // Custom error handler that returns JSON
    app.use(function (err, req, res, next) {
+      console.error("ERROR:", JSON.stringify(err, null, 2));
       if (typeof err !== "object") {
          // If the object is not an Error, create a representation that appears to be
          err = {
@@ -85,6 +92,5 @@ SwaggerExpress.create(config, function (err, swaggerExpress) {
    var port = process.env.PORT || config.port;
    port = config.port;
    app.listen(port);
-   console.log("Listening...");    
-   console.log("try this:\ncurl http://127.0.0.1:" + port + "/api/v1/applications");
+   console.log("Listening...");
 });

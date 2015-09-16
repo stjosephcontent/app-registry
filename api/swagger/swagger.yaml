@@ -12,529 +12,934 @@ host: "localhost:10010"
 basePath: "/api/v1"
 schemes:
 - "http"
-
 consumes:
 - "application/json"
 produces:
 - "application/json"
 paths:
-
-  ## All applications
-  /applications:
-    x-swagger-router-controller: "ApplicationsController"
-
+  /projects:
+    x-swagger-router-controller: "ProjectsController"
     get:
-      description: "Read all Applications from the registry."
-      operationId: "ReadApplications"
+      description: "Read all Projects from the registry."
+      operationId: "ReadAllProjects"
+      summary: "Read All Projects"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       responses:
         200:
           description: "Success."
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ApplicationResponse"
+              $ref: "#/definitions/ProjectObject"
         405:
-          description: "Validation exception."              
+          description: "Validation exception"
         default:
           description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
+    post:
+      description: "Create a new uniquely named project."
+      operationId: "CreateProject"
+      summary: "Create Project"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "body"
+        description: "The JSON Project object."
+        schema:
+          $ref: "#/definitions/ProjectRequest"
+        in: "body"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ProjectObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}:
+    x-swagger-router-controller: "ProjectsController"
+    get:
+      description: "Returns the named project."
+      operationId: "ReadProjectByPermalink"
+      summary: "Read Project by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ProjectObject"
+        405:
+          description: "Validation exception"
+        500:
+          description: "General failure."
+        default:
+          description: "Error"
+    patch:
+      description: "Patches the named project. Note that this API updates top level properties only. To make changes to nested Applications and Services use the relevant deep API."
+      operationId: "PatchProjectByPermalink"
+      summary: "Patch Project by permalink"
+      consumes:
+      - "application/json-patch+json"
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to patch."
+        type: "string"
+        in: "path"
+        required: true
 
-    #  security:
-     #   - auth:
-      #    - "write_reg"
-
-  /applications/{application}:
+      - name: "body"
+        description: "The JSON Project object."
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/PatchObject"          
+        in: "body"
+        
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ProjectRequest"
+        405:
+          description: "Validation exception"
+        500:
+          description: "General failure."
+        default:
+          description: "Error"
+    delete:
+      description: "Deep deletes the Project identified by projectSlug including all descendant child objects."
+      operationId: "DeleteProjectByPermalink"
+      summary: "Delete Project by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to delete."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        204:
+          description: "Deleted successfuly, no status message will be sent."
+        404:
+          description: "Resource not found, no status message will be sent."
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}/applications:
     x-swagger-router-controller: "ApplicationsController"
     get:
-      description: "Read a specific application with deep Ref object."
-      operationId: "ReadApplication"
+      description: "Returns all Applications for the named Project."
+      operationId: "ReadAllApplicationsByProjectSlug"
+      summary: "Read all Applications by Project"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to read."
-          type: "string"
-          required: true
-
-      responses:
-          200:
-            description: "Success."
-            schema:
-                $ref: "#/definitions/ApplicationResponse"
-          405:
-            description: "Validation exception."              
-          default:
-            description: "Error"
-            schema:
-              $ref: "#/definitions/ErrorResponse"
-
-    post:
-      description: "Create a new Application in the registry."
-      operationId: "CreateApplication"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-
-      parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to create."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Application request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/ApplicationRequest"
-
-      responses:
-        200: 
-          description: "Success."
-          schema:
-            type: "object"
-            $ref: "#/definitions/ApplicationResponse"
-        default:
-          description: "Error."
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-
-    put:
-      description: "Update an Application object."
-      operationId: "UpdateApplication"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-
-      parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to add the ref to."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Application request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/ApplicationRequest"
-
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
       responses:
         200:
           description: "Success."
           schema:
             type: "object"
-            $ref: "#/definitions/ApplicationResponse"
+            additionalProperties:
+              $ref: "#/definitions/ApplicationObject"
         405:
-          description: "Validation exception."
-        404:
-          description: "Application not found."
-        400:
-          description: "Invalid name supplied."            
-
-  /applications/{application}/{ref}:
+          description: "Validation exception"
+        500:
+          description: "General failure"
+        default:
+          description: "Error"
+    post:
+      description: "Create new Application object for the named Project object."
+      operationId: "CreateApplicationByProjectSlug"
+      summary: "Create Application by Project"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "body"
+        description: "The Application object to create."
+        schema:
+          $ref: "#/definitions/ApplicationObject"
+        in: "body"
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ApplicationObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}/applications/{applicationSlug}:
     x-swagger-router-controller: "ApplicationsController"
-    post:
-      description: "Create a new Application Ref object."
-      operationId: "CreateApplicationRef"
+    get:
+      description: "Returns the named Application."
+      operationId: "ReadApplicationByPermalink"
+      summary: "Read Application by permalink"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to create."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "ref"
-          description: "The name of the ref to create."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Ref request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/RefRequest"
-
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
       responses:
-        200: 
+        200:
           description: "Success."
           schema:
-            type: "object"
-            $ref: "#/definitions/ApplicationResponse"
+            $ref: "#/definitions/ApplicationObject"
+        405:
+          description: "Validation exception"
         default:
-          description: "Error."
+          description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-
     put:
-      description: "Update an Application's Ref object."
-      operationId: "UpdateApplicationRef"
+      description: "Returns the named Application."
+      operationId: "UpdateApplicationByPermalink"
+      summary: "Read Application by permalink"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to create."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "ref"
-          description: "The name of the ref to create."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Ref request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/RefRequest"
-
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ApplicationObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: "Returns the named Application."
+      operationId: "DeleteApplicationByPermalink"
+      summary: "Read Application by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ApplicationObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}/applications/{applicationSlug}/refs:
+    x-swagger-router-controller: "RefsController"
+    get:
+      description: "Reads all Ref objects under the specified Application object."
+      operationId: "ReadAllRefsByApplicationSlug"
+      summary: "Read all Refs by Application slug"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
       responses:
         200:
           description: "Success."
           schema:
             type: "object"
-            $ref: "#/definitions/ApplicationResponse"
+            additionalProperties:
+              $ref: "#/definitions/RefObject"
         405:
-          description: "Validation exception."
-        404:
-          description: "Application not found."
-        400:
-          description: "Invalid name supplied."            
-
-  /applications/{application}/{ref}/{host}:
-    x-swagger-router-controller: "ApplicationsController"
+          description: "Validation exception"
+        500:
+          description: "Validation exception"
+        default:
+          description: "Error"
     post:
-      description: "Create a new Target object on a specific Application and Ref."
-      operationId: "CreateApplicationRefTarget"
+      description: "Creates a new Ref object under the specified Application object."
+      operationId: "CreateRefByPermalink"
+      summary: "Create Ref by permalink"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to create."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "ref"
-          description: "The name of the ref to create."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "host"
-          description: "The name of the host to create."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Host (aka Target) request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/HostRequest"
-
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "body"
+        description: "A qualified Ref object"
+        schema:
+          $ref: "#/definitions/RefObject"
+        in: "body"
       responses:
-        200: 
+        200:
           description: "Success."
           schema:
-            type: "object"
-            $ref: "#/definitions/ApplicationResponse"
+            $ref: "#/definitions/ApplicationObject"
+        405:
+          description: "Validation exception"
         default:
-          description: "Error."
+          description: "Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-
-    put:
-      description: "Update a target on a specific Application and Ref."
-      operationId: "UpdateApplicationRefTarget"
+  /projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}:
+    x-swagger-router-controller: "RefsController"
+    get:
+      description: "Returns the named Ref."
+      operationId: "ReadRefByPermalink"
+      summary: "Read Ref by permalink"
       consumes:
-        - "application/json"
+      - "application/json"
       produces:
-        - "application/json"
-
+      - "application/json"
       parameters:
-        - in: "path"
-          name: "application"
-          description: "The name of the application to update."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "ref"
-          description: "The name of the ref to update."
-          type: "string"
-          required: true
-
-        - in: "path"
-          name: "host"
-          description: "The name of the host to update."
-          type: "string"
-          required: true
-
-        - in: "body"
-          name: "body"
-          description: "A valid Host request object."
-          required: true
-          schema: 
-            $ref: "#/definitions/HostRequest"
-
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "detail"
+        description: "Specifies the level of detail to return. Options are small, medium and full (default)."
+        type: "string"
+        in: "query"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/RefObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: "Updates the named Ref."
+      operationId: "UpdateRefByPermalink"
+      summary: "Update Ref by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/RefObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: "Delete the named Ref."
+      operationId: "DeleteRefByPermalink"
+      summary: "Delete Ref by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}/services:
+    x-swagger-router-controller: "ServicesController"
+    get:
+      description: "Reads all Service objects under the specified Ref object."
+      operationId: "ReadAllServicesByRefSlug"
+      summary: "Read all Services by Ref slug"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
       responses:
         200:
           description: "Success."
           schema:
             type: "object"
-            $ref: "#/definitions/ApplicationResponse"
+            additionalProperties:
+              $ref: "#/definitions/ServiceObject"
         405:
-          description: "Validation exception."
-        404:
-          description: "Application not found."
-        400:
-          description: "Invalid name supplied."            
-
-
+          description: "Validation exception"
+        500:
+          description: "General error"
+        default:
+          description: "Error"
+    post:
+      description: "Creates a new Service object under the specified Ref object."
+      operationId: "CreateServiceByPermalink"
+      summary: "Create Service by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "body"
+        description: "A qualified Ref object"
+        schema:
+          $ref: "#/definitions/ServiceObject"
+        in: "body"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ServiceObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}/services/{serviceSlug}:
+    x-swagger-router-controller: "ServicesController"
+    get:
+      description: "Returns the named Service."
+      operationId: "ReadServiceByPermalink"
+      summary: "Read Service by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "serviceSlug"
+        description: "The Service slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ServiceObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: "Updates the named Service."
+      operationId: "UpdateServiceByPermalink"
+      summary: "Update Service by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "serviceSlug"
+        description: "The Service slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/ServiceObject"
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: "Delete the named Service."
+      operationId: "DeleteServiceByPermalink"
+      summary: "Delete Service by permalink"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectSlug"
+        description: "The unique Project slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "applicationSlug"
+        description: "The Application slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "refSlug"
+        description: "The Ref slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      - name: "serviceSlug"
+        description: "The Service slug to search on."
+        type: "string"
+        in: "path"
+        required: true
+      responses:
+        200:
+          description: "Success."
+        405:
+          description: "Validation exception"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 definitions:
-
-  ## Application Response Object ##        
-  ApplicationRequest:
-    description: "The abstract Application details required to create and update."
+  ProjectObject:
+    description: "A Project object with optional Applications."
     type: "object"
-    required:
-    - "name"
-    additionalProperties: false
     properties:
-
-      permalink:
-        description: "A unique dot separated path to the Application instance."
-        type: "string"
-
       name:
-        description: "The lowercase and dash-separated canonical name for this application."
+        description: "Name of the Project."
         type: "string"
-
+      slug:
+        description: "Unique lowercase dash-separated version of the name property."
+        type: "string"
       description:
-        description: "Unambiguously describes this specific SJC application."
+        description: ""
         type: "string"
-
-      address: 
-        description: "The production/public domain."
+      homepage:
+        description: ""
         type: "string"
-
-      bugs:
-        description: "The web address of the issue tracker."
-        type: "string"
-
-      docs:
-        description: "The web address of the wiki or documentation repository."         
-        type: "string"
-
-      git: 
-        description: "The Git remote this instance is tied to."
-        type: "object"
-        properties:
-          ssh:
-            description: "The Git/SSH URL if it exists."
-            type: "string"
-          https:
-            description: "The https URL if it exists."
-            type: "string"
-
       tags:
-        description: "Free form tags for additional categorization."
+        description: ""
         type: "array"
-        items: 
+        items:
           type: "string"
-
-  ## Application Response Object ##        
-  ApplicationResponse:
-    description: "An Application Object including previously system generated UUID and ephemeralPort."
-    type: "object"
-    additionalProperties: false
-    properties:
-      permalink:
-        description: "A unique dot separated path to the Application instance."
-        type: "string"
-
-      name:
-        description: "The lowercase and dash-separated canonical name for this application."
-        type: "string"
-
-      description:
-        description: "Unambiguously describes this specific SJC application."
-        type: "string"
-
-      address: 
-        description: "The production/public domain."
-        type: "string"
-
-      bugs:
-        description: "The web address of the issue tracker."
-        type: "string"
-
-      docs:
-        description: "The web address of the wiki or documentation repository."         
-        type: "string"
-
-      remotes:
-         description: "a hash of Git remotes that requires at minimum an origin property."
-         type: "object"
-         required:
-         - "origin"
-         properties:
-           origin:
-             $ref: "#/definitions/GitDefinition"
-         additionalProperties:
-            $ref: "#/definitions/GitDefinition"
-          
-      refs:
-        description: "A hash of all known refs (aka branches) including instance meta if available."
+      applications:
+        description: ""
         type: "object"
         additionalProperties:
-          $ref: "#/definitions/RefDefinition"
-
+          $ref: "#/definitions/ApplicationObject"
+  ProjectRequest:
+    description: "Use for Project POSTs and PUTs"
+    type: "object"
+    properties:
+      name:
+        description: "Name of the Project."
+        type: "string"
+      slug:
+        description: "Unique lowercase dash-separated version of the name property."
+        type: "string"
+      description:
+        description: ""
+        type: "string"
+      homepage:
+        description: ""
+        type: "string"
       tags:
-        description: "Free form tags for additional categorization."
+        description: ""
         type: "array"
-        items: 
+        items:
           type: "string"
-
-      audit:
-        description: "A standard SJC audit object for tracking updates to each instance of an AppDef."
+  ApplicationObject:
+    description: "Describes an application member of Project.Applications."
+    type: "object"
+    additionalProperties: false
+    properties:
+      name:
+        description: "Name of the application."
+        type: "string"
+      slug:
+        description: "Unique-to-the-project lowercase dash-separated version of the name property."
+        type: "string"
+      description:
+        description: ""
+        type: "string"
+      address:
+        description: ""
+        type: "string"
+      issues:
+        description: ""
+        type: "string"
+      docs:
+        description: ""
+        type: "string"
+      remotes:
+        description: ""
         type: "object"
-        $ref: "#/definitions/AuditInfo"
-
-  RefRequest:
-    description: "A Reference request object specifically for POST/PUT."
-    type: "object"
-    additionalProperties: false
-    $ref: "#/definitions/RefDefinition"
-
-  HostRequest:
-    description: "A Host (aka Target) request object specifically for POST/PUT."
-    type: "object"
-    additionalProperties: false
-    $ref: "#/definitions/HostDefinition"
-
-  GitRemotesDefinition:
-      description: "a hash of Git remotes that requires at minimum an origin property."
-      type: "object"
-      required:
-         - "origin"
-      properties:
-        origin:
-          $ref: "#/definitions/GitDefinition"
-
-  GitDefinition: 
-    description: "(One of) the Git remote(s) this instance is tied to."
-    type: "object"
-    properties:
-      ssh:
-        description: "The Git/SSH URL if it exists."
-        type: "string"
-        format: "uri"
-      https:
-        description: "The HTTPS URL if it exists."
-        type: "string"
-        format: "uri"
-
-  RefDefinition:
-    description: "A git ref or branch plus additional meta describing the version, target envs, etc."
+        required:
+        - "origin"
+        additionalProperties:
+          $ref: "#/definitions/RemoteObject"
+      refs:
+        description: ""
+        type: "object"
+        additionalProperties:
+          $ref: "#/definitions/RefObject"
+      tags:
+        description: ""
+        type: "array"
+        items:
+          type: "string"
+      audit:
+        description: ""
+        type: "object"
+        $ref: "#/definitions/AuditObject"
+  RefObject:
+    description: "A Git branch or ref plus additional meta describing the version, target envs, etc."
     type: "object"
     additionalProperties: false
     properties:
-      version: 
-        description: "The SemVer version of the current instance of an SJC application. See [http://semver.org/](http://semver.org/)"
+      version:
+        description: "The SemVer version of the current SJC application. See [http://semver.org/](http://semver.org/)"
         type: "string"
         format: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
-
-      hosts:
+      instances:
+        description: "Known instances, or deployments, of this ref."
         type: "object"
-        additionalProperties: 
-          $ref: "#/definitions/HostDefinition"
-
+        additionalProperties:
+          $ref: "#/definitions/InstanceObject"
       testRunners:
         type: "object"
         additionalProperties:
-          $ref: "#/definitions/TestRunnerDefinition"
-
-      commands:
+          $ref: "#/definitions/TestRunnerObject"
+      scripts:
         type: "object"
         additionalProperties:
-          $ref: "#/definitions/CommandDefinition"
-
+          type: "string"
       services:
         type: "object"
         additionalProperties:
-          $ref: "#/definitions/ServiceDefinition"
-
-  HostDefinition:
-    description: ""
+          $ref: "#/definitions/ServiceObject"
+      audit:
+        type: "object"
+        additionalProperties:
+          $ref: "#/definitions/AuditObject"
+  InstanceObject:
+    description: "A known deployment of a ref to a host environment such as dev, stage or prod."
     type: "object"
-
-  TestRunnerDefinition:
-    description: "Everything needed to run some sort of unit tests. Technology agnostic."
+    additionalProperties: false
+    properties:
+      name:
+        description: "Name of the Instance (dev, stage or prod)."
+        type: "string"
+      description:
+        description: "tbd"
+        type: "string"
+      hostname:
+        description: "Hostname or IP of the host of the instance. Typicall localhost or a private address in the case of dev."
+        type: "string"
+      cnames:
+        description: ""
+        type: "array"
+        items:
+          type: "string"
+  TestRunnerObject:
+    description: "Describes entry points for a class of test runners. Typically an object embodies an individual platform, framework or language."
     type: "object"
-    additionalProperties: 
+    additionalProperties:
       type: "string"
-
-  ServiceDefinition:
-    description: "Is this a docker file?"
+  ScriptObject:
+    description: "Describes SJC executable scripts"
     type: "object"
-
-  CommandDefinition:
-    description: "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version."
-    type: "string"
-
-  AuditInfo:
+    additionalProperties:
+      type: "string"
+  AuditObject:
     description: "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited."
     type: "object"
+    additionalProperties: false
     properties:
       created:
         type: "object"
         properties:
-          by: 
+          by:
             type: "string"
-          on: 
+          on:
             type: "string"
             format: "date-time"
       updated:
         type: "object"
         properties:
-          by: 
+          by:
             type: "string"
-          on: 
+          on:
             type: "string"
             format: "date-time"
+  ServiceObject:
+    description: "tbd"
+    type: "object"
+    additionalProperties: false
+    properties:
+      image:
+        description: "Pointer to the docker image for this service."
+        type: "string"
+      description:
+        description: "The description of the service."
+        type: "string"
+      comments:
+        description: "Additional comments and useful information about the service."
+        type: "string"
+      startup:
+        description: "Script, command or executable to launch."
+        type: "string"
+      port:
+        description: "The generic port exposed by this service."
+        type: "string"
+      protocols:
+        description: "A list of protocol handlers (e.g. http and https)."
+        type: "array"
+        items:
+          type: "string"
+  RemoteObject:
+    description: "Represents an SSH and/or HTTPS endpoint to a Git repository."
+    type: "object"
+    additionalProperties: false
+    properties:
+      ssh:
+        description: "The SSH/Git path to the repository."
+        type: "string"
+      https:
+        description: "An HTTPS path to the repository."
+        type: "string"
+        format: "uri"
+  
+
+  PatchObject:
+    description: "A JSONPatch document as defined by RFC 6902."
+    type: "object"
+
+    properties:
+      op:
+        type: "string"
+        description: "The operation to be performed"
+        enum:
+        - "add"
+        - "remove"
+        - "replace"
+        - "move"
+        - "copy"
+        - "test"
+      path:
+        type: "string"
+        description: "A JSON-Pointer"
+      value:
+        type: "object"
+        description: "The value to be used within the operations."
+      from:
+        type: "string"
+        description: "A string containing a JSON Pointer value."
+  PatchObjects:
+   description: "An array of PatchObject"
+   type: "array"
+   items:
+     $ref: "#/definitions/PatchObject"
 
   ErrorResponse:
     required:
@@ -546,15 +951,6 @@ definitions:
         format: "int32"
       message:
         type: "string"
-  
-
-      
-
-
-
-
-      
-
 securityDefinitions:
   auth:
     type: "oauth2"

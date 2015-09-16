@@ -1,79 +1,78 @@
 ﻿"use strict";
 
 var util = require("util"),
-   mockData = require("../mocks/mock-data.json"),
-   application = require("../helpers/ApplicationModel.js");
+   Application = require("../helpers/ApplicationModel.js");
 
 module.exports = {
-   ReadApplications: ReadApplications,
-   ReadApplication: ReadApplication,
-   CreateApplication: CreateApplication,
-   UpdateApplication: UpdateApplication,
-
-   CreateApplicationRef: CreateApplicationRef,
-   UpdateApplicationRef: UpdateApplicationRef,
-
-   CreateApplicationRefTarget: CreateApplicationRefTarget,
-   UpdateApplicationRefTarget: UpdateApplicationRefTarget
+   ReadAllApplicationsByProjectSlug: ReadAllApplicationsByProjectSlug,
+   CreateApplicationByProjectSlug: CreateApplicationByProjectSlug,
+   ReadApplicationByPermalink: ReadApplicationByPermalink,
+   UpdateApplicationByPermalink: UpdateApplicationByPermalink,
+   DeleteApplicationByPermalink: DeleteApplicationByPermalink
 };
 
-function ReadApplications(req, res, next) {
-   var json = [mockData.ApplicationResponse];
-   res.json(json);
-}
 
-
-function ReadApplication(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
-}
-
-function CreateApplication(req, res, next) {
-   application.create(req.swagger.params.body.value)
-   .then(function () { 
-      res.status(200).json(mockData.ApplicationResponse);
-   })
-   .catch(function (reason) {
-      console.error(reason);
-      res.status(400);
+function ReadAllApplicationsByProjectSlug(req, res, next) {
+   var projectSlug = req.swagger.params.projectSlug.value;
+   Application.ReadAllApplicationsByProjectSlug(projectSlug).then(function (Applications) {
+      res.status(200).json(Applications);
+   }).catch(function (reason) {
+      if (reason === 404) {
+         res.status(404).send("");
+      }
+      else {
+         res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
+      }
    });
-
-   
-}
-
-function UpdateApplication(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
-}
-
-function CreateApplicationRef(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
-}
-
-function UpdateApplicationRef(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
-}
-
-function CreateApplicationRefTarget(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
-}
-
-function UpdateApplicationRefTarget(req, res, next) {
-   res.status(200).json(mockData.ApplicationRequest);
 }
 
 
-var hosts = {
-   "prod": {
-      "cnames": ["brandstem.ca", "www.brandstem,ca"],
-      "host": "ecs-production-cluster.sjc.io"
-   },
-   "stage": {
-      "host": "ecs-staging-cluster.sjc.io",
-      "cnames": ["stage.sjc.io"]
-   } ,
-   "develop": {
-      "host": "localhost"
-   },
-   "integration": {
-      "host": "integration.sjc.io"
-   }
+function CreateApplicationByProjectSlug(req, res, next) {
+   Application.CreateApplicationByProjectSlug(req.swagger.params.body.value).then(function (newApplicationObject) {
+      res.status(200).json(newApplicationObject);
+   }).catch(function (reason) {
+      if (reason === 400.11) {
+         res.status(400).json({ "code": 400, "message": "A Application with that slug already exists." });
+      }
+      else {
+         res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
+      }
+   });
+}
+
+
+function ReadApplicationByPermalink(req, res, next) {
+   Application.ReadApplicationBySlug(req.swagger.params.Applicationslug.value).then(function (ApplicationObject) {
+      res.status(200).json(ApplicationObject);
+   }).catch(function (reason) {
+      if (reason === 404) {
+         res.status(404).send("");
+      }
+      else {
+         res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
+      }
+   });
+}
+
+
+function UpdateApplicationByPermalink(req, res, next) {
+   Application.UpdateApplicationBySlug(req.swagger.params.body.value).then(function (Applications) {
+      res.status(200).json(Applications);
+   }).catch(function (reason) {
+      res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
+   });
+}
+
+
+function DeleteApplicationByPermalink(req, res, next) {
+   Application.DeleteApplicationBySlug(req.swagger.params.Applicationslug.value).then(function () {
+      res.status(204).send("");
+   }).catch(function (reason) {
+      if (reason === 404) {
+         res.status(404).send("");
+      }
+      else {
+         res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
+      }
+   });
 }

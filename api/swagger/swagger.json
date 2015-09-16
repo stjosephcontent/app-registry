@@ -13,7 +13,7 @@
       }
    },
    "host": "localhost:10010",
-   "basePath": "/api/v1/",
+   "basePath": "/api/v1",
    "schemes": [
       "http"
    ],
@@ -24,11 +24,12 @@
       "application/json"
    ],
    "paths": {
-      "/applications": {
-         "x-swagger-router-controller": "ApplicationsController",
+      "/projects": {
+         "x-swagger-router-controller": "ProjectsController",
          "get": {
-            "description": "Read all Applications from the registry.",
-            "operationId": "ReadApplications",
+            "description": "Read all Projects from the registry.",
+            "operationId": "ReadAllProjects",
+            "summary": "Read All Projects",
             "consumes": [
                "application/json"
             ],
@@ -41,12 +42,50 @@
                   "schema": {
                      "type": "array",
                      "items": {
-                        "$ref": "#/definitions/ApplicationResponse"
+                        "$ref": "#/definitions/ProjectObject"
                      }
                   }
                },
                "405": {
-                  "description": "Validation exception."
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "post": {
+            "description": "Create a new uniquely named project.",
+            "operationId": "CreateProject",
+            "summary": "Create Project",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "body",
+                  "description": "The JSON Project object.",
+                  "schema": {
+                     "$ref": "#/definitions/ProjectObject"
+                  },
+                  "in": "body"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ProjectObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
                },
                "default": {
                   "description": "Error",
@@ -57,11 +96,132 @@
             }
          }
       },
-      "/applications/{application}/": {
+      "/projects/{projectSlug}": {
+         "x-swagger-router-controller": "ProjectsController",
+         "get": {
+            "description": "Returns the named project.",
+            "operationId": "ReadProjectByPermalink",
+            "summary": "Read Project by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ProjectObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "put": {
+            "description": "Updates the named project. Note that this API updates top level properties only. To make changes to nested Applications and Services use the relevant deep API.",
+            "operationId": "UpdateProjectByPermalink",
+            "summary": "Update Project by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to update.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ProjectObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "delete": {
+            "description": "Deep deletes the Project identified by projectSlug including all descendant child objects.",
+            "operationId": "DeleteProjectByPermalink",
+            "summary": "Delete Project by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to delete.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "204": {
+                  "description": "Deleted successfuly, no status message will be sent."
+               },
+               "404": {
+                  "description": "Resource not found, no status message will be sent."
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         }
+      },
+      "/projects/{projectSlug}/applications": {
          "x-swagger-router-controller": "ApplicationsController",
          "get": {
-            "description": "Read a specific application with deep Ref object.",
-            "operationId": "ReadApplication",
+            "description": "Returns all Applications for the named Project.",
+            "operationId": "ReadAllApplicationsByProjectSlug",
+            "summary": "Read all Applications by Project",
             "consumes": [
                "application/json"
             ],
@@ -70,22 +230,31 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to read.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
+               },
+               {
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "type": "array",
+                     "items": {
+                        "$ref": "#/definitions/ApplicationObject"
+                     }
                   }
                },
                "405": {
-                  "description": "Validation exception."
+                  "description": "Validation exception"
                },
                "default": {
                   "description": "Error",
@@ -96,8 +265,9 @@
             }
          },
          "post": {
-            "description": "Create a new Application in the registry.",
-            "operationId": "CreateApplication",
+            "description": "Create new Application object for the named Project object.",
+            "operationId": "CreateApplicationByProjectSlug",
+            "summary": "Create Application by Project",
             "consumes": [
                "application/json"
             ],
@@ -106,90 +276,52 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to create.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "body",
                   "name": "body",
-                  "description": "A valid Application request object.",
-                  "required": true,
+                  "description": "The Application object to create.",
                   "schema": {
-                     "$ref": "#/definitions/ApplicationRequest"
-                  }
+                     "$ref": "#/definitions/ApplicationObject"
+                  },
+                  "in": "body"
+               },
+               {
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "$ref": "#/definitions/ApplicationObject"
                   }
                },
+               "405": {
+                  "description": "Validation exception"
+               },
                "default": {
-                  "description": "Error.",
+                  "description": "Error",
                   "schema": {
                      "$ref": "#/definitions/ErrorResponse"
                   }
-               }
-            }
-         },
-         "put": {
-            "description": "Update an Application object.",
-            "operationId": "UpdateApplication",
-            "consumes": [
-               "application/json"
-            ],
-            "produces": [
-               "application/json"
-            ],
-            "parameters": [
-               {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to add the ref to.",
-                  "type": "string",
-                  "required": true
-               },
-               {
-                  "in": "body",
-                  "name": "body",
-                  "description": "A valid Application request object.",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/ApplicationRequest"
-                  }
-               }
-            ],
-            "responses": {
-               "200": {
-                  "description": "Success.",
-                  "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
-                  }
-               },
-               "400": {
-                  "description": "Invalid name supplied."
-               },
-               "404": {
-                  "description": "Application not found."
-               },
-               "405": {
-                  "description": "Validation exception."
                }
             }
          }
       },
-      "/applications/{application}/{ref}": {
+      "/projects/{projectSlug}/applications/{applicationSlug}": {
          "x-swagger-router-controller": "ApplicationsController",
-         "post": {
-            "description": "Create a new Application Ref object.",
-            "operationId": "CreateApplicationRef",
+         "get": {
+            "description": "Returns the named Application.",
+            "operationId": "ReadApplicationByPermalink",
+            "summary": "Read Application by permalink",
             "consumes": [
                "application/json"
             ],
@@ -198,39 +330,38 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to create.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "path",
-                  "name": "ref",
-                  "description": "The name of the ref to create.",
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "body",
-                  "name": "body",
-                  "description": "A valid Ref request object.",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/RefRequest"
-                  }
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "$ref": "#/definitions/ApplicationObject"
                   }
                },
+               "405": {
+                  "description": "Validation exception"
+               },
                "default": {
-                  "description": "Error.",
+                  "description": "Error",
                   "schema": {
                      "$ref": "#/definitions/ErrorResponse"
                   }
@@ -238,8 +369,9 @@
             }
          },
          "put": {
-            "description": "Update an Application's Ref object.",
-            "operationId": "UpdateApplicationRef",
+            "description": "Returns the named Application.",
+            "operationId": "UpdateApplicationByPermalink",
+            "summary": "Read Application by permalink",
             "consumes": [
                "application/json"
             ],
@@ -248,54 +380,101 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to create.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "path",
-                  "name": "ref",
-                  "description": "The name of the ref to create.",
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "body",
-                  "name": "body",
-                  "description": "A valid Ref request object.",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/RefRequest"
-                  }
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "$ref": "#/definitions/ApplicationObject"
                   }
                },
-               "400": {
-                  "description": "Invalid name supplied."
+               "405": {
+                  "description": "Validation exception"
                },
-               "404": {
-                  "description": "Application not found."
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "delete": {
+            "description": "Returns the named Application.",
+            "operationId": "DeleteApplicationByPermalink",
+            "summary": "Read Application by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ApplicationObject"
+                  }
                },
                "405": {
-                  "description": "Validation exception."
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
                }
             }
          }
       },
-      "/applications/{application}/{ref}/{host}": {
-         "x-swagger-router-controller": "ApplicationsController",
-         "post": {
-            "description": "Create a new Target object on a specific Application and Ref.",
-            "operationId": "CreateApplicationRefTarget",
+      "/projects/{projectSlug}/applications/{applicationSlug}/refs": {
+         "x-swagger-router-controller": "RefsController",
+         "get": {
+            "description": "Reads all Ref objects under the specified Application object.",
+            "operationId": "ReadAllResfByPermalink",
+            "summary": "Read all Refs by permalink",
             "consumes": [
                "application/json"
             ],
@@ -304,46 +483,147 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to create.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "path",
-                  "name": "ref",
-                  "description": "The name of the ref to create.",
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
                   "type": "string",
-                  "required": true
-               },
-               {
                   "in": "path",
-                  "name": "host",
-                  "description": "The name of the host to create.",
-                  "type": "string",
                   "required": true
-               },
-               {
-                  "in": "body",
-                  "name": "body",
-                  "description": "A valid Host (aka Target) request object.",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/HostRequest"
-                  }
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "type": "array",
+                     "items": {
+                        "$ref": "#/definitions/RefObject"
+                     }
                   }
                },
+               "405": {
+                  "description": "Validation exception"
+               },
                "default": {
-                  "description": "Error.",
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "post": {
+            "description": "Creates a new Ref object under the specified Application object.",
+            "operationId": "CreateRefByPermalink",
+            "summary": "Create Ref by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "body",
+                  "description": "A qualified Ref object",
+                  "schema": {
+                     "$ref": "#/definitions/RefObject"
+                  },
+                  "in": "body"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ApplicationObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         }
+      },
+      "/projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}": {
+         "x-swagger-router-controller": "RefsController",
+         "get": {
+            "description": "Returns the named Ref.",
+            "operationId": "ReadRefByPermalink",
+            "summary": "Read Ref by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "detail",
+                  "description": "Specifies the level of detail to return. Options are small, medium and full (default).",
+                  "type": "string",
+                  "in": "query"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/RefObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
                   "schema": {
                      "$ref": "#/definitions/ErrorResponse"
                   }
@@ -351,8 +631,9 @@
             }
          },
          "put": {
-            "description": "Update a target on a specific Application and Ref.",
-            "operationId": "UpdateApplicationRefTarget",
+            "description": "Updates the named Ref.",
+            "operationId": "UpdateRefByPermalink",
+            "summary": "Update Ref by permalink",
             "consumes": [
                "application/json"
             ],
@@ -361,188 +642,488 @@
             ],
             "parameters": [
                {
-                  "in": "path",
-                  "name": "application",
-                  "description": "The name of the application to update.",
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "path",
-                  "name": "ref",
-                  "description": "The name of the ref to update.",
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
                },
                {
-                  "in": "path",
-                  "name": "host",
-                  "description": "The name of the host to update.",
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
                   "type": "string",
+                  "in": "path",
                   "required": true
-               },
-               {
-                  "in": "body",
-                  "name": "body",
-                  "description": "A valid Host request object.",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/HostRequest"
-                  }
                }
             ],
             "responses": {
                "200": {
                   "description": "Success.",
                   "schema": {
-                     "type": "object",
-                     "$ref": "#/definitions/ApplicationResponse"
+                     "$ref": "#/definitions/RefObject"
                   }
                },
-               "400": {
-                  "description": "Invalid name supplied."
+               "405": {
+                  "description": "Validation exception"
                },
-               "404": {
-                  "description": "Application not found."
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "delete": {
+            "description": "Delete the named Ref.",
+            "operationId": "DeleteRefByPermalink",
+            "summary": "Delete Ref by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success."
                },
                "405": {
-                  "description": "Validation exception."
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         }
+      },
+      "/projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}/services": {
+         "x-swagger-router-controller": "ServicesController",
+         "get": {
+            "description": "Reads all Service objects under the specified Ref object.",
+            "operationId": "ReadAllServicesByPermalink",
+            "summary": "Read all Services by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "type": "array",
+                     "items": {
+                        "$ref": "#/definitions/ServiceObject"
+                     }
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "post": {
+            "description": "Creates a new Service object under the specified Ref object.",
+            "operationId": "CreateServiceByPermalink",
+            "summary": "Create Service by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "body",
+                  "description": "A qualified Ref object",
+                  "schema": {
+                     "$ref": "#/definitions/ServiceObject"
+                  },
+                  "in": "body"
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ServiceObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         }
+      },
+      "/projects/{projectSlug}/applications/{applicationSlug}/refs/{refSlug}/services/{serviceSlug}": {
+         "x-swagger-router-controller": "ServicesController",
+         "get": {
+            "description": "Returns the named Service.",
+            "operationId": "ReadServiceByPermalink",
+            "summary": "Read Service by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "serviceSlug",
+                  "description": "The Service slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ServiceObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "put": {
+            "description": "Updates the named Service.",
+            "operationId": "UpdateServiceByPermalink",
+            "summary": "Update Service by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "serviceSlug",
+                  "description": "The Service slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success.",
+                  "schema": {
+                     "$ref": "#/definitions/ServiceObject"
+                  }
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
+               }
+            }
+         },
+         "delete": {
+            "description": "Delete the named Service.",
+            "operationId": "DeleteServiceByPermalink",
+            "summary": "Delete Service by permalink",
+            "consumes": [
+               "application/json"
+            ],
+            "produces": [
+               "application/json"
+            ],
+            "parameters": [
+               {
+                  "name": "projectSlug",
+                  "description": "The unique Project slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "applicationSlug",
+                  "description": "The Application slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "refSlug",
+                  "description": "The Ref slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               },
+               {
+                  "name": "serviceSlug",
+                  "description": "The Service slug to search on.",
+                  "type": "string",
+                  "in": "path",
+                  "required": true
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success."
+               },
+               "405": {
+                  "description": "Validation exception"
+               },
+               "default": {
+                  "description": "Error",
+                  "schema": {
+                     "$ref": "#/definitions/ErrorResponse"
+                  }
                }
             }
          }
       }
    },
    "definitions": {
-      "ApplicationRequest": {
-         "description": "The abstract Application details required to create and update.",
+      "ProjectObject": {
+         "description": "A Project object with optional Applications.",
          "type": "object",
-         "additionalProperties": false,
          "properties": {
-            "permalink": {
-               "description": "A unique dot separated path to the Application instance.",
+            "name": {
+               "description": "Name of the Project.",
                "type": "string"
             },
-            "name": {
-               "description": "The lowercase and dash-separated canonical name for this application.",
+            "slug": {
+               "description": "Unique lowercase dash-separated version of the name property.",
+               "type": "string"
+            },
+            "fullname": {
+               "description": "",
                "type": "string"
             },
             "description": {
-               "description": "Unambiguously describes this specific SJC application.",
+               "description": "",
                "type": "string"
             },
-            "address": {
-               "description": "The production/public domain.",
+            "homepage": {
+               "description": "",
                "type": "string"
-            },
-            "bugs": {
-               "description": "The web address of the issue tracker.",
-               "type": "string"
-            },
-            "docs": {
-               "description": "The web address of the wiki or documentation repository.",
-               "type": "string"
-            },
-            "git": {
-               "description": "The Git remote this instance is tied to.",
-               "type": "object",
-               "properties": {
-                  "ssh": {
-                     "description": "The Git/SSH URL if it exists.",
-                     "type": "string"
-                  },
-                  "https": {
-                     "description": "The https URL if it exists.",
-                     "type": "string"
-                  }
-               }
             },
             "tags": {
-               "description": "Free form tags for additional categorization.",
+               "description": "",
                "type": "array",
                "items": {
                   "type": "string"
                }
+            },
+            "applications": {
+               "description": "",
+               "type": "object",
+               "additionalProperties": {
+                  "$ref": "#/definitions/ApplicationObject"
+               }
             }
          }
       },
-      "ApplicationResponse": {
-         "description": "An Application Object including previously system generated UUID and ephemeralPort.",
+      "ApplicationObject": {
+         "description": "Describes an application member of Project.Applications.",
          "type": "object",
          "additionalProperties": false,
          "properties": {
-            "permalink": {
-               "description": "A unique dot separated path to the Application instance.",
+            "name": {
+               "description": "Name of the application.",
                "type": "string"
             },
-            "name": {
-               "description": "The lowercase and dash-separated canonical name for this application.",
+            "slug": {
+               "description": "Unique-to-the-project lowercase dash-separated version of the name property.",
                "type": "string"
             },
             "description": {
-               "description": "Unambiguously describes this specific SJC application.",
+               "description": "",
                "type": "string"
             },
             "address": {
-               "description": "The production/public domain.",
+               "description": "",
                "type": "string"
             },
-            "bugs": {
-               "description": "The web address of the issue tracker.",
+            "issues": {
+               "description": "",
                "type": "string"
             },
             "docs": {
-               "description": "The web address of the wiki or documentation repository.",
+               "description": "",
                "type": "string"
             },
-            "git": {
-               "description": "The Git remote this instance is tied to.",
+            "remotes": {
+               "description": "",
                "type": "object",
-               "properties": {
-                  "ssh": {
-                     "description": "The Git/SSH URL if it exists.",
-                     "type": "string"
-                  },
-                  "https": {
-                     "description": "The https URL if it exists.",
-                     "type": "string"
-                  }
+               "required": [
+                  "origin"
+               ],
+               "additionalProperties": {
+                  "$ref": "#/definitions/RemoteObject"
                }
             },
             "refs": {
-               "description": "A hash of all known refs (aka branches) including instance meta if available.",
+               "description": "",
                "type": "object",
                "additionalProperties": {
-                  "$ref": "#/definitions/RefDefinition"
+                  "$ref": "#/definitions/RefObject"
                }
             },
             "tags": {
-               "description": "Free form tags for additional categorization.",
+               "description": "",
                "type": "array",
                "items": {
                   "type": "string"
                }
             },
             "audit": {
-               "description": "A standard SJC audit object for tracking updates to each instance of an AppDef.",
+               "description": "",
                "type": "object",
-               "$ref": "#/definitions/AuditInfo"
+               "$ref": "#/definitions/AuditObject"
             }
          }
       },
-      "RefRequest": {
-         "description": "A Reference request object specifically for POST/PUT.",
-         "type": "object",
-         "additionalProperties": false,
-         "$ref": "#/definitions/RefDefinition"
-      },
-      "HostRequest": {
-         "description": "A Host (aka Target) request object specifically for POST/PUT.",
-         "type": "object",
-         "additionalProperties": false,
-         "$ref": "#/definitions/HostDefinition"
-      },
-      "RefDefinition": {
-         "description": "A git ref or branch plus additional meta describing the version, target envs, etc.",
+      "RefObject": {
+         "description": "A Git branch or ref plus additional meta describing the version, target envs, etc.",
          "type": "object",
          "additionalProperties": false,
          "properties": {
@@ -551,54 +1132,74 @@
                "type": "string",
                "format": "/^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$/"
             },
-            "hosts": {
+            "containerHosts": {
                "type": "object",
                "additionalProperties": {
-                  "$ref": "#/definitions/HostDefinition"
+                  "$ref": "#/definitions/ContainerHostObject"
                }
             },
             "testRunners": {
                "type": "object",
                "additionalProperties": {
-                  "$ref": "#/definitions/TestRunnerDefinition"
+                  "$ref": "#/definitions/TestRunnerObject"
                }
             },
-            "commands": {
+            "scripts": {
                "type": "object",
                "additionalProperties": {
-                  "$ref": "#/definitions/CommandDefinition"
+                  "type": "string"
                }
             },
             "services": {
                "type": "object",
                "additionalProperties": {
-                  "$ref": "#/definitions/ServiceDefinition"
+                  "$ref": "#/definitions/ServiceObject"
+               }
+            },
+            "audit": {
+               "type": "object",
+               "additionalProperties": {
+                  "$ref": "#/definitions/AuditObject"
                }
             }
          }
       },
-      "HostDefinition": {
-         "description": "",
-         "type": "object"
+      "ContainerHostObject": {
+         "description": "Defines the properties for a remote host environment.",
+         "type": "object",
+         "additionalProperties": false,
+         "properties": {
+            "hostname": {
+               "description": "",
+               "type": "string"
+            },
+            "cnames": {
+               "description": "",
+               "type": "array",
+               "items": {
+                  "type": "string"
+               }
+            }
+         }
       },
-      "TestRunnerDefinition": {
-         "description": "Everything needed to run some sort of unit tests. Technology agnostic.",
+      "TestRunnerObject": {
+         "description": "Describes entry points for a class of test runners. Typically an object embodies an individual platform, framework or language.",
          "type": "object",
          "additionalProperties": {
             "type": "string"
          }
       },
-      "ServiceDefinition": {
-         "description": "Is this a docker file?",
-         "type": "object"
+      "ScriptObject": {
+         "description": "Describes SJC executable scripts",
+         "type": "object",
+         "additionalProperties": {
+            "type": "string"
+         }
       },
-      "CommandDefinition": {
-         "description": "A (currently) OS agnostic bash shell command. Note that there is no support for token expansion in this version.",
-         "type": "string"
-      },
-      "AuditInfo": {
+      "AuditObject": {
          "description": "The AuditInfo is becoming an SJC standard for conveying an auditable track of who made modifications when. It does not currently support the concept of 'what' was audited.",
          "type": "object",
+         "additionalProperties": false,
          "properties": {
             "created": {
                "type": "object",
@@ -623,6 +1224,60 @@
                      "format": "date-time"
                   }
                }
+            }
+         }
+      },
+      "ServiceObject": {
+         "description": "tbd",
+         "type": "object",
+         "additionalProperties": false,
+         "properties": {
+            "docker": {
+               "description": "Pointer to the docker image for this service.",
+               "type": "string"
+            },
+            "description": {
+               "description": "The description of the service.",
+               "type": "string"
+            },
+            "comments": {
+               "description": "Additional comments and useful information about the service.",
+               "type": "string"
+            },
+            "startup": {
+               "description": "Script, command or executable to launch.",
+               "type": "string"
+            },
+            "containerHost": {
+               "description": "The hostname hosting the service. Usualy localhost but could point to an external 3rd party.",
+               "type": "string"
+            },
+            "port": {
+               "description": "The generic port exposed by this service.",
+               "type": "string"
+            },
+            "protocols": {
+               "description": "A list of protocol handlers (e.g. http and https).",
+               "type": "array",
+               "items": {
+                  "type": "string"
+               }
+            }
+         }
+      },
+      "RemoteObject": {
+         "description": "Represents an SSH and/or HTTPS endpoint to a Git repository.",
+         "type": "object",
+         "additionalProperties": false,
+         "properties": {
+            "ssh": {
+               "description": "The SSH/Git path to the repository.",
+               "type": "string"
+            },
+            "https": {
+               "description": "An HTTPS path to the repository.",
+               "type": "string",
+               "format": "uri"
             }
          }
       },

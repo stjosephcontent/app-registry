@@ -211,7 +211,7 @@
                "cli",
                "command-line",
                "tool",
-               "utility",
+               "utility"
 
             ],
 
@@ -237,7 +237,7 @@
          "directory",
          "directory service"
       ]
-   },
+   }
 
 
 

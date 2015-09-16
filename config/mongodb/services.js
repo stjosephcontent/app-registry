@@ -1,19 +1,19 @@
-﻿[
+db.Services.insert([
    {
       "slug": "mongodb",
       "description": "Implements a non-clustered MongoDb 3.0.6 database server.",
       "type": "server.db",
       "language": "javascript",
-      "ports": [ 27017 ],
+      "ports": [27017],
       "version": "3.0.6",
-      "docker": { }
+      "docker": {}
 
    },
    {
       "description": "Implements a non-clustered Postgres x.y.z database server.",
-      "docker": { },
+      "docker": {},
       "language": "sql",
-      "ports": [ ],
+      "ports": [],
       "slug": "postgres",
       "type": "server.db",
       "version": "?"
@@ -23,35 +23,35 @@
       "description": "",
       "type": "server.app",
       "language": "python",
-      "ports": [ 80, 443 ],
+      "ports": [80, 443],
       "version": "0.12.7",
-      "docker": { }
+      "docker": {}
    },
    {
       "slug": "python",
       "description": "Python 2.7 on Ubuntu 14.04",
       "type": "language",
       "language": "python",
-      "ports": [ ],
+      "ports": [],
       "version": "2.7",
-      "docker": { }
+      "docker": {}
    },
    {
       "slug": "nodejs",
       "description": "",
       "type": "server.app",
       "language": "javascript",
-      "ports": [ 80, 443 ],
+      "ports": [80, 443],
       "version": "0.12.7",
-      "docker": { }
+      "docker": {}
    },
    {
       "slug": "external",
       "description": "An external API such as Twitter, Facebook, YouTube, etc.",
       "type": "webservice",
       "langauge": "unknown",
-      "ports": [ ],
+      "ports": [],
       "version": "1.0.0",
-      "docker": { }
+      "docker": {}
    }
-]
+], { w: 1 })
