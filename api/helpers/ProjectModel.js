@@ -1,6 +1,7 @@
 ﻿"use strict"
 
 var mongoWrapper = require("./MongoWrapper.js");
+var toMongodb = require("jsonpatch-to-mongodb");
 
 var ProjectModel = function (data) {
    var self = this;
@@ -74,14 +75,27 @@ ProjectModel.ReadProjectByPermalink = function (projectSlug) {
 
 ProjectModel.PatchProjectByPermalink = function (projectSlug, patchObject) {
    return new Promise(function (resolve, reject) {
-      mongoWrapper.db.collection("Projects").findOne({ "slug": projectSlug }, function (err, doc) {
+
+      var criteria = { "slug": projectSlug };
+      var sort = {};      
+      var update = toMongodb(patchObject);
+      var options = { "new": true };
+
+      mongoWrapper.db.collection("Projects").update(criteria, update, function (err, doc) {
          if (err) {
+            console.log(err);
             reject(err);
          }
-         else {
-            resolve(doc);
+         else { 
+            resolve(doc.value);
          }
       });
+      
+      //).then(function (doc) {
+      //   resolve(doc);
+      //}).catch(function (reason) { 
+      //   reject(reason);   
+      //});
    });
 }
 

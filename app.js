@@ -3,6 +3,7 @@
 var SwaggerExpress = require("swagger-express-mw"),
    app = require("express")(),
    nconf = require("nconf"),
+   bodyParser = require("body-parser"),
    ProjectModel = require("./api/helpers/ProjectModel.js"),  
    ApplicationModel = require("./api/helpers/ApplicationModel.js"),  
    RefModel = require("./api/helpers/RefModel.js"),  
@@ -16,6 +17,8 @@ nconf.file("./config.json");
 var config = nconf.get();
 config.appRoot = __dirname;
 
+// Configure bodyParser to handle application/json-patch+json
+app.use(bodyParser.json({ type: "application/*+json" }));
 
 // Enable CORS
 app.use(function (req, res, next) {

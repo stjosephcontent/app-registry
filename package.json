@@ -20,7 +20,9 @@
   "author": "Troy Forster",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.14.0",
     "express": "^4.12.3",
+    "jsonpatch-to-mongodb": "^0.2.0",
     "mongodb": "^2.0.42",
     "nconf": "^0.7.2",
     "swagger-express-mw": "0.0.x"
@@ -31,11 +33,16 @@
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
     "gulp-groc": "^0.4.1",
+    "gulp-swagger": "0.0.6",
     "gulp-yaml": "^0.2.4",
+    "install": "^0.1.8",
+    "json-refs": "^1.0.5",
+    "json-schema-ref-parser": "^1.0.3",
     "mocha": "^2.2.5",
     "request": "^2.58.0",
     "should": "^5.2.0",
     "supertest": "^0.15.0",
+    "yaml-js": "^0.1.1",
     "z-schema": "^3.12.0"
   }
 }
