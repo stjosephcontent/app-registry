@@ -50,6 +50,7 @@
     <Content Include="api\swagger\paths\projects-projectSlug.yaml" />
     <Content Include="api\swagger\paths\projects.yaml" />
     <Content Include="api\swagger\README.md" />
+    <Content Include="api\swagger\swagger.yaml" />
     <Content Include="api\swagger\swagger.yaml.bakcup" />
     <Content Include="config.json" />
     <Content Include="package.json" />

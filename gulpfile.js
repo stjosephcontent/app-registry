@@ -2,6 +2,12 @@ var gulp = require("gulp"),
    resolve = require("json-refs").resolveRefs,
    fs = require("fs");
 
+// VisualStudio's one downside is to add BOMs to all UTF-8 files
+gulp.task("strip-bom", function () {
+   // To-do: How does gulp.src search top down and replace files in place?
+   return gulp.src('1.txt').pipe(stripBom()).pipe(gulp.dest('dest'));
+});
+
 // To-do: Gulpify this! It should use gulp.src and gulp.dest.
 gulp.task("schema", function () {
    var $RefParser = require("json-schema-ref-parser");

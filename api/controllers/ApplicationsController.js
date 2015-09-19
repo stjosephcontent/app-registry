@@ -5,7 +5,7 @@ var util = require("util"),
 
 module.exports = {
    ReadAllApplicationsByProjectSlug: ReadAllApplicationsByProjectSlug,
-   CreateApplicationByProjectSlug: CreateApplicationByProjectSlug,
+      CreateApplicationByProjectSlug: CreateApplicationByProjectSlug,
    ReadApplicationByPermalink: ReadApplicationByPermalink,
    UpdateApplicationByPermalink: UpdateApplicationByPermalink,
    DeleteApplicationByPermalink: DeleteApplicationByPermalink

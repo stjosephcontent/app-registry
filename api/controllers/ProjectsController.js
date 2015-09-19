@@ -63,7 +63,7 @@ function PatchProjectByPermalink(req, res, next) {
    var patchObject = req.swagger.params.body.value;
 
    Project.PatchProjectByPermalink(projectSlug, patchObject).then(function (updatedProjectObject) {
-      res.status(200).json(updatedProjectObject);
+      res.status(204).send("");
    }).catch(function (reason) {
       res.status(400).json({ "code": 400, "message": "An error occured on the server and has been logged." });
    });
