@@ -7,17 +7,17 @@ gulp.task("schema", function () {
    var $RefParser = require("json-schema-ref-parser");
 
    // Dereferencing parses a root file plus all externally referenced files and produces a single JSON schema object
-   $RefParser.dereference("./services/nodejs/api/swagger/index.yaml").then(function (schema) {
+   $RefParser.dereference("./api/swagger/index.yaml").then(function (schema) {
 
       // While we are not using a JSON version at the moment it might be useful for other tools in the future.
-      fs.writeFile("./services/nodejs/api/swagger/swagger.json", JSON.stringify(schema));
+      fs.writeFile("./api/swagger/swagger.json", JSON.stringify(schema));
 
       // Since all the $refs are now inlined the .definitions object is redundant and can be deleted
       delete schema.definitions;
 
       // Bundle the schema c/w local references and save as our new swagger.yaml (required by swagger node)
       $RefParser.bundle(schema).then(function (schema) {
-         fs.writeFile("./services/nodejs/api/swagger/swagger.yaml", $RefParser.YAML.stringify(schema));
+         fs.writeFile("./api/swagger/swagger.yaml", $RefParser.YAML.stringify(schema));
       });
    }).catch(function (reason) {
       console.error("Error dereferencing: %s", reason);
