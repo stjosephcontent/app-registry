@@ -15,6 +15,9 @@ module.exports = app; // for testing
 
 nconf.file("./config.json");
 var config = nconf.get();
+
+config.db.connectionString = 'mongodb://' + process.env['MONGODB_PORT_27017_TCP_ADDR'] + ':' + process.env['MONGODB_PORT_27017_TCP_PORT'] + '/app-reg';
+
 config.appRoot = __dirname;
 
 // Configure bodyParser to handle application/json-patch+json
