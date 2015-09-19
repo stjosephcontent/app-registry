@@ -48,10 +48,8 @@ patch:
         $ref: "../definitions/PatchObject.yaml"
     in: "body"
   responses:
-    200:
-      description: "Success."
-      schema:
-        $ref: "../definitions/ProjectRequest.yaml"
+    204:
+      description: "Success. No response text."
     405:
       description: "Validation exception"
     500:

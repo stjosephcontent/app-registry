@@ -56,7 +56,7 @@ paths:
                 applications:
                   description: ''
                   type: object
-                  additionalProperties: &ref_4
+                  additionalProperties: &ref_3
                     description: Describes an application member of Project.Applications.
                     type: object
                     additionalProperties: false
@@ -99,7 +99,7 @@ paths:
                       refs:
                         description: ''
                         type: object
-                        additionalProperties: &ref_5
+                        additionalProperties: &ref_4
                           description: 'A Git branch or ref plus additional meta describing the version, target envs, etc.'
                           type: object
                           additionalProperties: false
@@ -143,7 +143,7 @@ paths:
                                 type: string
                             services:
                               type: object
-                              additionalProperties: &ref_6
+                              additionalProperties: &ref_5
                                 description: tbd
                                 type: object
                                 additionalProperties: false
@@ -227,7 +227,7 @@ paths:
       parameters:
         - name: body
           description: The JSON Project object.
-          schema: &ref_3
+          schema:
             description: Use for Project POSTs and PUTs
             type: object
             properties:
@@ -333,9 +333,8 @@ paths:
                 url: 'https://tools.ietf.org/html/rfc6902'
           in: body
       responses:
-        '200':
-          description: Success.
-          schema: *ref_3
+        '204':
+          description: Success. No response text.
         '405':
           description: Validation exception
         '500':
@@ -392,7 +391,7 @@ paths:
           description: Success.
           schema:
             type: object
-            additionalProperties: *ref_4
+            additionalProperties: *ref_3
         '405':
           description: Validation exception
         '500':
@@ -416,7 +415,7 @@ paths:
           required: true
         - name: body
           description: The Application object to create.
-          schema: *ref_4
+          schema: *ref_3
           in: body
         - name: detail
           description: 'Specifies the level of detail to return. Options are small, medium and full (default).'
@@ -425,7 +424,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_4
+          schema: *ref_3
         '405':
           description: Validation exception
         default:
@@ -459,7 +458,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_4
+          schema: *ref_3
         '405':
           description: Validation exception
         default:
@@ -492,7 +491,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_4
+          schema: *ref_3
         '405':
           description: Validation exception
         default:
@@ -525,7 +524,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_4
+          schema: *ref_3
         '405':
           description: Validation exception
         default:
@@ -557,7 +556,7 @@ paths:
           description: Success.
           schema:
             type: object
-            additionalProperties: *ref_5
+            additionalProperties: *ref_4
         '405':
           description: Validation exception
         '500':
@@ -586,12 +585,12 @@ paths:
           required: true
         - name: body
           description: A qualified Ref object
-          schema: *ref_5
+          schema: *ref_4
           in: body
       responses:
         '200':
           description: Success.
-          schema: *ref_4
+          schema: *ref_3
         '405':
           description: Validation exception
         default:
@@ -630,7 +629,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_5
+          schema: *ref_4
         '405':
           description: Validation exception
         default:
@@ -664,7 +663,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_5
+          schema: *ref_4
         '405':
           description: Validation exception
         default:
@@ -734,7 +733,7 @@ paths:
           description: Success.
           schema:
             type: object
-            additionalProperties: *ref_6
+            additionalProperties: *ref_5
         '405':
           description: Validation exception
         '500':
@@ -768,12 +767,12 @@ paths:
           required: true
         - name: body
           description: A qualified Ref object
-          schema: *ref_6
+          schema: *ref_5
           in: body
       responses:
         '200':
           description: Success.
-          schema: *ref_6
+          schema: *ref_5
         '405':
           description: Validation exception
         default:
@@ -813,7 +812,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_6
+          schema: *ref_5
         '405':
           description: Validation exception
         default:
@@ -852,7 +851,7 @@ paths:
       responses:
         '200':
           description: Success.
-          schema: *ref_6
+          schema: *ref_5
         '405':
           description: Validation exception
         default:
