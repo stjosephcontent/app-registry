@@ -11,5 +11,7 @@ docker rm $containername 2> /dev/null
 
 docker run -P -d \
 	--name $containername \
-    --link ${project}-${appname}-${branch}-mongodb:mongodb \
-    $imagename
+	--link ${project}-${appname}-${branch}-mongodb:mongodb \
+	-v $DIR/services/$servicename:/usr/src/app \
+	-v $DIR/logz/$servicename:/logz \
+	$imagename

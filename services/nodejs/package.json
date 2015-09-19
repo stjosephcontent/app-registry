@@ -6,7 +6,8 @@
   "directories": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --harmony app.js"
+    "oldstart": "node --harmony app.js",
+    "start": "pm2 --no-daemon -e /logz/err.log -o /logz/out.log start app.js"
   },
   "repository": {
     "type": "git",

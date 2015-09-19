@@ -1,9 +1,11 @@
 # IDE files
 .idea
 
+
 # Logs
 logs
 *.log
+logz
 
 # Runtime data
 pids
