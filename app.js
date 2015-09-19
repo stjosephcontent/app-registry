@@ -17,8 +17,13 @@ nconf.file("./config.json");
 var config = nconf.get();
 config.appRoot = __dirname;
 
-// Configure bodyParser to handle application/json-patch+json
-app.use(bodyParser.json({ type: "application/*+json" }));
+// JSON Patch (http://tools.ietf.org/html/rfc6902) requires application/json-patch+json
+app.use(bodyParser.json({
+   type: function (req) {
+      var contentType = req.headers["content-type"];
+      return (contentType === "application/json" || contentType === "application/json-patch+json");
+   }
+}));
 
 // Enable CORS
 app.use(function (req, res, next) {

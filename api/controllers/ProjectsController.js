@@ -1,7 +1,8 @@
 ﻿"use strict";
 
 var util = require("util"),
-   Project = require("../helpers/ProjectModel.js");
+   Project = require("../helpers/ProjectModel.js"),
+   swaggerTools = require("swagger-tools");
 
 module.exports = {
    ReadAllProjects: ReadAllProjects,   
@@ -28,7 +29,7 @@ function ReadAllProjects(req, res, next) {
 
 function CreateProject(req, res, next) {
    var projectRequest = req.swagger.params.body.value;
-
+   
    Project.CreateProject(projectRequest).then(function (newProjectObject) {
       res.status(200).json(newProjectObject);
    }).catch(function (reason) {
@@ -44,7 +45,7 @@ function CreateProject(req, res, next) {
 
 function ReadProjectByPermalink(req, res, next) {
    var projectSlug = req.swagger.params.projectSlug.value;
-
+   
    Project.ReadProjectByPermalink(projectSlug).then(function (projectObject) {
       res.status(200).json(projectObject);
    }).catch(function (reason) {
@@ -61,7 +62,7 @@ function ReadProjectByPermalink(req, res, next) {
 function PatchProjectByPermalink(req, res, next) {
    var projectSlug = req.swagger.params.projectSlug.value;
    var patchObject = req.swagger.params.body.value;
-
+   
    Project.PatchProjectByPermalink(projectSlug, patchObject).then(function (updatedProjectObject) {
       res.status(204).send("");
    }).catch(function (reason) {
@@ -72,7 +73,7 @@ function PatchProjectByPermalink(req, res, next) {
 
 function DeleteProjectByPermalink(req, res, next) {
    var projectSlug = req.swagger.params.projectSlug.value;
-
+   
    Project.DeleteProjectByPermalink(projectSlug).then(function () {
       res.status(204).send("");
    }).catch(function (reason) {

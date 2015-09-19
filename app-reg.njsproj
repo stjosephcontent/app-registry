@@ -65,6 +65,7 @@
     <Compile Include="api\helpers\ServiceModel.js" />
     <Compile Include="app.js" />
     <Compile Include="config\mongodb\projects.js" />
+    <Compile Include="config\mongodb\sample-project.js" />
     <Compile Include="config\mongodb\services.js" />
     <Compile Include="gulpfile.js" />
     <Compile Include="api\helpers\ApplicationModel.js" />
