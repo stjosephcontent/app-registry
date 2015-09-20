@@ -1,4 +1,4 @@
-# SJC Application Registry
+# SJC Application Registry (Dockerized)
 
 Registry as a Service providing daemon-like assistance to SJC CLI via HTTPS RESTful API.
 

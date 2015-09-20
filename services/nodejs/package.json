@@ -5,7 +5,8 @@
   "main": "app.js",
   "directories": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,7 @@
   "dependencies": {
     "body-parser": "^1.14.0",
     "express": "^4.12.3",
-    "jsonpatch-to-mongodb": "git@github.com:stjosephcontent/jsonpatch-to-mongodb.git",
+    "jsonpatch-to-mongodb": "https://github.com/stjosephcontent/jsonpatch-to-mongodb.git",
     "mongodb": "^2.0.42",
     "nconf": "^0.7.2",
     "swagger-express-mw": "0.0.x",
