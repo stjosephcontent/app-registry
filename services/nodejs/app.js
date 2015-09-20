@@ -10,14 +10,14 @@ var SwaggerExpress = require("swagger-express-mw"),
    ServiceModel = require("./api/helpers/ServiceModel.js"),  
    MongoWrapper = require("./api/helpers/MongoWrapper.js");
 
-
 module.exports = app; // for testing
 
-nconf.file("./config.json");
+nconf.env().file("./config.json");
 var config = nconf.get();
 
-config.db.connectionString = 'mongodb://' + process.env['MONGODB_PORT_27017_TCP_ADDR'] + ':' + process.env['MONGODB_PORT_27017_TCP_PORT'] + '/app-reg';
+config.connectionString = "mongodb://" + nconf.get("MONGODB_PORT_27017_TCP_ADDR") + ':' + nconf.get("MONGODB_PORT_27017_TCP_PORT") + "/" + nconf.get("dbname");
 
+// Required by Docker
 config.appRoot = __dirname;
 
 // JSON Patch (http://tools.ietf.org/html/rfc6902) requires application/json-patch+json
@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
 });
 
 
-MongoWrapper.init(config.db).then(function (result) {
+MongoWrapper.init(config).then(function (result) {
    console.log(result);
 })
 .then(function () {
@@ -100,8 +100,6 @@ SwaggerExpress.create(config, function (err, swaggerExpress) {
       res.end(JSON.stringify(err));
    });
    
-   var port = process.env.PORT || config.port;
-   port = config.port;
-   app.listen(port);
-   console.log("Listening...");
+   app.listen(config.PORT);
+   console.log("Listening on %s", config.PORT);
 });
