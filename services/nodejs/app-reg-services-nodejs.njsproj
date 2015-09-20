@@ -17,13 +17,13 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include=".editorconfig" />
-    <Content Include=".env.x" />
     <Content Include="build.sh" />
     <Content Include="config.json" />
     <Content Include="Dockerfile" />
     <Content Include="gulp-schema.sh" />
     <Content Include="package.json" />
     <Compile Include="app.js" />
+    <Compile Include="config\mongodb\sample-project.js" />
     <Compile Include="gulpfile.js" />
     <Compile Include="api\controllers\ApplicationsController.js" />
     <Compile Include="api\controllers\ProjectsController.js" />

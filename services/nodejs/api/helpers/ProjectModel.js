@@ -2,7 +2,9 @@
 
 var mongoWrapper = require("./MongoWrapper.js");
 var toMongodb = require("jsonpatch-to-mongodb");
-
+var jsonpatch = require("fast-json-patch");
+var swaggerObject = require("../swagger/swagger.json");
+var spec = require("swagger-tools").specs.v2;
 var ProjectModel = function (data) {
    var self = this;
 }
@@ -72,18 +74,57 @@ ProjectModel.ReadProjectByPermalink = function (projectSlug) {
    });
 }
 
+// Wrap Swagger Validate Model in a Promise
+var validateObject = function (swaggerObject, swaggerPath, objectToValidate) {
+   return new Promise(function (resolve, reject) {
+      spec.validateModel(swaggerObject, swaggerPath, objectToValidate, function (err, result) {
+         if (!err && !result) {
+            resolve();
+         }
+         else {
+            var reason = err || result;
+            reject(reason);
+         }
+      });
+   });
+}
+
 
 ProjectModel.PatchProjectByPermalink = function (projectSlug, patchObject) {
    return new Promise(function (resolve, reject) {
-      
-      var criteria = { "slug": projectSlug };
-      var update = toMongodb(patchObject);
-      
-      mongoWrapper.db.collection("Projects").update(criteria, update).then(function (results) {
-         resolve(results.value)
+      ProjectModel.ReadProjectByPermalink(projectSlug).then(function (projectObject) {
+         jsonpatch.apply(projectObject, patchObject);
+         ProjectModel.UpdateProjectByPermalink(projectSlug, projectObject).then(function (newProjectObject) { 
+            resolve(newProjectObject);
+         }).catch(function (reason) { 
+            reject(reason);
+         });
       }).catch(function (reason) {
-         reject(reason);
+         reject(reason);      
       });
+   });
+}
+
+// Validates newProjectObject against schema before saving it. newProjectObject must contain
+ProjectModel.UpdateProjectByPermalink = function (projectSlug, newProjectObject) {
+   return new Promise(function (resolve, reject) {
+      delete newProjectObject._id; // We find by slug
+      var criteria = {
+         "slug": projectSlug
+      }
+      var options = {
+         "upsert": false,
+         "multi": false
+      }
+      //validateObject(swaggerObject, "#/definitions/ProjectObject", newProjectObject).then(function () {
+         mongoWrapper.db.collection("Projects").update(criteria, newProjectObject, options).then(function () {
+            resolve(newProjectObject)
+         }).catch(function (reason) {
+            reject(reason);
+         });
+      //}).catch(function (reason) {
+      //   reject(reason);
+      //});
    });
 }
 
